@@ -42,7 +42,7 @@
                     <h1 class="text-2xl font-bold tracking-tight text-white">Signature Tool</h1>
                     <span class="text-[10px] font-semibold tracking-wider uppercase bg-indigo-500/10 text-indigo-400 px-2 py-0.5 rounded border border-indigo-500/20 mt-0.5">V1 Tool</span>
                 </div>
-                <p class="text-sm text-slate-400 mt-1">Dual-Pass Hybrid Orientation Analyzer (Continuous Cursive & Dark Background Support)</p>
+                <p class="text-sm text-slate-400 mt-1">Advanced Document Signature Optimizer & Format Analyzer</p>
             </div>
             
             <div class="flex items-center gap-1.5 text-[11px] text-emerald-400 font-medium bg-emerald-500/5 px-2.5 py-1 rounded-full border border-emerald-500/10 shrink-0">
@@ -72,7 +72,7 @@
             
             <div id="placeholderText" class="text-center space-y-2 pointer-events-none">
                 <p class="text-sm font-medium text-slate-400">Click to upload or press <span class="text-indigo-400">Ctrl + V</span> to paste</p>
-                <p class="text-xs text-slate-500">Intelligent balance tuning for light, dark, or black signature templates</p>
+                <p class="text-xs text-slate-500">Intelligent orientation tracking optimized for cursive handwriting structures</p>
             </div>
 
             <div id="previewBox" class="preview-container hidden rounded-lg p-1.5 bg-white shadow-xl">
@@ -238,77 +238,28 @@
             rawImageInstance.src = src;
         }
 
+        // OPTIMIZED ANALYZER ENGINE: Evaluates handwriting density alignments
         function calculateHumanReadingScore(ctx, w, h) {
             const imgData = ctx.getImageData(0, 0, w, h);
             const data = imgData.data;
 
-            let binaryGrid = new Uint8Array(w * h);
             let rowProfiles = new Array(h).fill(0);
             let colProfiles = new Array(w).fill(0);
 
+            // Populate pixel profiles mapping threshold points
             for (let y = 0; y < h; y++) {
                 for (let x = 0; x < w; x++) {
                     let idx = (y * w + x) * 4;
                     let brightness = (data[idx] + data[idx+1] + data[idx+2]) / 3;
-                    if (data[idx+3] > 40 && brightness < 195) {
-                        binaryGrid[y * w + x] = 1;
+                    if (data[idx+3] > 40 && brightness < 210) {
                         rowProfiles[y]++;
                         colProfiles[x]++;
                     }
                 }
             }
 
-            let visited = new Uint8Array(w * h);
-            let characterBlobs = [];
-            const samplingStep = 2;
-
-            for (let y = 4; y < h - 4; y += samplingStep) {
-                for (let x = 4; x < w - 4; x += samplingStep) {
-                    let idx = y * w + x;
-                    if (binaryGrid[idx] === 1 && visited[idx] === 0) {
-                        let bMinX = x, bMaxX = x, bMinY = y, bMaxY = y;
-                        let queue = [idx];
-                        visited[idx] = 1;
-
-                        let count = 0;
-                        while(queue.length > 0 && count < 400) {
-                            let curr = queue.shift();
-                            count++;
-                            let cx = curr % w;
-                            let cy = Math.floor(curr / w);
-
-                            if (cx < bMinX) bMinX = cx; if (cx > bMaxX) bMaxX = cx;
-                            if (cy < bMinY) bMinY = cy; if (cy > bMaxY) bMaxY = cy;
-
-                            let neighbors = [curr - 1, curr + 1, curr - w, curr + w];
-                            for(let n of neighbors) {
-                                if (n >= 0 && n < w*h && binaryGrid[n] === 1 && visited[n] === 0) {
-                                    visited[n] = 1;
-                                    queue.push(n);
-                                }
-                            }
-                        }
-
-                        let bW = bMaxX - bMinX + 1;
-                        let bH = bMaxY - bMinY + 1;
-                        if (bW > 5 && bH > 5) {
-                            characterBlobs.push({ w: bW, h: bH, cy: bMinY + (bH / 2) });
-                        }
-                    }
-                }
-            }
-
-            if (characterBlobs.length >= 3) {
-                let printLayoutAlignmentIndex = 0;
-                characterBlobs.forEach(blob => {
-                    let aspect = blob.h / blob.w;
-                    if (aspect >= 0.7 && aspect <= 4.0) printLayoutAlignmentIndex += 35;
-                });
-                return printLayoutAlignmentIndex;
-            }
-
             const getProfileVariance = (arr) => {
-                const active = arr.filter(v => v > 0);
+                const active = arr.filter(v => v > 1);
                 if (active.length === 0) return 0;
                 const mean = active.reduce((a, b) => a + b, 0) / active.length;
                 return arr.reduce((s, v) => s + Math.pow(v - mean, 2), 0) / arr.length;
@@ -317,7 +268,9 @@
             let horizontalVariance = getProfileVariance(rowProfiles);
             let verticalVariance = getProfileVariance(colProfiles);
 
-            return (horizontalVariance / (verticalVariance + 1)) * 10;
+            // Natural human reading layout favors high rows variance and flat spread column profile variance
+            if (horizontalVariance === 0 || verticalVariance === 0) return 0;
+            return (horizontalVariance / (verticalVariance + 0.1));
         }
 
         async function applySignatureTransformation(enableAutoOrientation = false) {
@@ -351,24 +304,18 @@
                     ctx.drawImage(rawImageInstance, -nativeW / 2, -nativeH / 2);
                     ctx.setTransform(1, 0, 0, 1, 0, 0);
 
-                    let trackingScore = calculateHumanReadingScore(ctx, processingCanvas.width, processingCanvas.height);
-                    if (angle === 90 || angle === 270) { trackingScore *= 1.4; }
-                    scores[angle] = trackingScore;
+                    scores[angle] = calculateHumanReadingScore(ctx, processingCanvas.width, processingCanvas.height);
                 }
 
+                // Determine best legibility angle mapping baseline curves
                 let optimumAngle = 0;
-                let baselineScore = scores[0];
-                let highestAlternativeScore = baselineScore;
+                let highestScore = scores[0];
 
                 for (let angle of [90, 180, 270]) {
-                    if (scores[angle] > highestAlternativeScore) {
-                        highestAlternativeScore = scores[angle];
+                    if (scores[angle] > highestScore) {
+                        highestScore = scores[angle];
                         optimumAngle = angle;
                     }
-                }
-
-                if (optimumAngle !== 0 && highestAlternativeScore < (baselineScore * 1.5)) {
-                    optimumAngle = 0;
                 }
 
                 targetRotation = optimumAngle;
@@ -395,13 +342,13 @@
             const w = processingCanvas.width;
             const h = processingCanvas.height;
 
-            // DYNAMIC BLACK POLARITY DETECTION LAYER
+            // BLACK POLARITY DETECTION LAYER
             let cornerBrightnessSum = 0;
             let samplePoints = [
-                0,                                    // Top-Left
-                (w - 1) * 4,                          // Top-Right
-                (h - 1) * w * 4,                      // Bottom-Left
-                ((h - 1) * w + (w - 1)) * 4           // Bottom-Right
+                0,                                    
+                (w - 1) * 4,                          
+                (h - 1) * w * 4,                      
+                ((h - 1) * w + (w - 1)) * 4           
             ];
             samplePoints.forEach(idx => {
                 cornerBrightnessSum += (pixels[idx] + pixels[idx+1] + pixels[idx+2]) / 3;
