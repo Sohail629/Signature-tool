@@ -42,7 +42,7 @@
                     <h1 class="text-2xl font-bold tracking-tight text-white">Signature Tool</h1>
                     <span class="text-[10px] font-semibold tracking-wider uppercase bg-indigo-500/10 text-indigo-400 px-2 py-0.5 rounded border border-indigo-500/20 mt-0.5">V1 Tool</span>
                 </div>
-                <p class="text-sm text-slate-400 mt-1">Advanced Cluster Extraction & Vector Orientation Engine</p>
+                <p class="text-sm text-slate-400 mt-1">Advanced Document Signature Optimizer & Format Analyzer</p>
             </div>
             
             <div class="flex items-center gap-1.5 text-[11px] text-emerald-400 font-medium bg-emerald-500/5 px-2.5 py-1 rounded-full border border-emerald-500/10 shrink-0">
@@ -72,7 +72,7 @@
             
             <div id="placeholderText" class="text-center space-y-2 pointer-events-none">
                 <p class="text-sm font-medium text-slate-400">Click to upload or press <span class="text-indigo-400">Ctrl + V</span> to paste</p>
-                <p class="text-xs text-slate-500">Intelligent handwriting multi-cluster reading orientation optimizer</p>
+                <p class="text-xs text-slate-500">Intelligent orientation tracking optimized for cursive handwriting structures</p>
             </div>
 
             <div id="previewBox" class="preview-container hidden rounded-lg p-1.5 bg-white shadow-xl">
@@ -218,7 +218,7 @@
             if (!file || !file.type.match('image.*')) return;
             initialSizeKBs = (file.size / 1024).toFixed(1);
             
-            downloadBtn.textContent = "Processing layout matrices...";
+            downloadBtn.textContent = "Processing layout arrays...";
             downloadBtn.disabled = true;
             
             const reader = new FileReader();
@@ -238,117 +238,39 @@
             rawImageInstance.src = src;
         }
 
-        // PERFECTED VECTOR MATRIX & CLUSTER ALIGNMENT ENGINE
+        // OPTIMIZED ANALYZER ENGINE: Evaluates handwriting density alignments
         function calculateHumanReadingScore(ctx, w, h) {
             const imgData = ctx.getImageData(0, 0, w, h);
             const data = imgData.data;
 
             let rowProfiles = new Array(h).fill(0);
             let colProfiles = new Array(w).fill(0);
-            let gridMap = new Uint8Array(w * h);
-            let activePoints = 0;
 
+            // Populate pixel profiles mapping threshold points
             for (let y = 0; y < h; y++) {
                 for (let x = 0; x < w; x++) {
                     let idx = (y * w + x) * 4;
-                    let luminosity = (data[idx] + data[idx+1] + data[idx+2]) / 3;
-                    
-                    if (luminosity < 185 && data[idx+3] > 50) {
+                    let brightness = (data[idx] + data[idx+1] + data[idx+2]) / 3;
+                    if (data[idx+3] > 40 && brightness < 210) {
                         rowProfiles[y]++;
                         colProfiles[x]++;
-                        gridMap[y * w + x] = 1;
-                        activePoints++;
                     }
                 }
             }
 
-            if (activePoints < 20) return 0;
-
-            // Feature 1: Cluster Analysis (Isolates actual structural parts instead of global box bounds)
-            let clusterCount = 0;
-            let combinedClusterAspects = 0;
-            let visited = new Uint8Array(w * h);
-            let step = 4;
-
-            for (let y = 10; y < h - 10; y += step) {
-                for (let x = 10; x < w - 10; x += step) {
-                    let gIdx = y * w + x;
-                    if (gridMap[gIdx] === 1 && visited[gIdx] === 0) {
-                        let minC_X = x, maxC_X = x, minC_Y = y, maxC_Y = y;
-                        let queue = [gIdx];
-                        visited[gIdx] = 1;
-                        let countSize = 0;
-
-                        while (queue.length > 0 && countSize < 400) {
-                            let curr = queue.shift();
-                            countSize++;
-                            let cx = curr % w;
-                            let cy = Math.floor(curr / w);
-
-                            if (cx < minC_X) minC_X = cx; if (cx > maxC_X) maxC_X = cx;
-                            if (cy < minC_Y) minC_Y = cy; if (cy > maxC_Y) maxC_Y = cy;
-
-                            let neighbors = [curr - 1, curr + 1, curr - w, curr + w];
-                            for (let n of neighbors) {
-                                if (n >= 0 && n < w * h && gridMap[n] === 1 && visited[n] === 0) {
-                                    visited[n] = 1;
-                                    queue.push(n);
-                                }
-                            }
-                        }
-
-                        let cW = maxC_X - minC_X + 1;
-                        let cH = maxC_Y - minC_Y + 1;
-                        if (cW > 8 && cH > 8) {
-                            clusterCount++;
-                            combinedClusterAspects += (cW / cH);
-                        }
-                    }
-                }
-            }
-
-            let meanClusterAspect = clusterCount > 0 ? (combinedClusterAspects / clusterCount) : 1.0;
-
-            // Feature 2: Entropy Projection Distribution
-            const calculateEntropy = (profile) => {
-                let nonZero = profile.filter(v => v > 1);
-                if (nonZero.length === 0) return 0;
-                let sum = nonZero.reduce((a, b) => a + b, 0);
-                return nonZero.reduce((entropy, val) => {
-                    let p = val / sum;
-                    return entropy - (p * Math.log2(p));
-                }, 0);
+            const getProfileVariance = (arr) => {
+                const active = arr.filter(v => v > 1);
+                if (active.length === 0) return 0;
+                const mean = active.reduce((a, b) => a + b, 0) / active.length;
+                return arr.reduce((s, v) => s + Math.pow(v - mean, 2), 0) / arr.length;
             };
 
-            let rowEntropy = calculateEntropy(rowProfiles);
-            let colEntropy = calculateEntropy(colProfiles);
+            let horizontalVariance = getProfileVariance(rowProfiles);
+            let verticalVariance = getProfileVariance(colProfiles);
 
-            let score = 0;
-
-            // Horizontal text has wider row entropy spread but highly focused profile structure
-            if (colEntropy > rowEntropy) {
-                score += 300;
-            }
-
-            // High cluster aspect directly means letters look wider naturally (upright flow layout rules)
-            if (meanClusterAspect >= 1.4 && meanClusterAspect <= 5.0) {
-                score += 450;
-            }
-
-            // Feature 3: Bottom-Gravity Baselines (Determining 180° flips)
-            let highMass = 0;
-            let lowMass = 0;
-            let splitLine = Math.floor(h * 0.5);
-            for (let y = 0; y < h; y++) {
-                if (y < splitLine) highMass += rowProfiles[y];
-                else lowMass += rowProfiles[y];
-            }
-
-            if (lowMass >= highMass) {
-                score += 150;
-            }
-
-            return score;
+            // Natural human reading layout favors high rows variance and flat spread column profile variance
+            if (horizontalVariance === 0 || verticalVariance === 0) return 0;
+            return (horizontalVariance / (verticalVariance + 0.1));
         }
 
         async function applySignatureTransformation(enableAutoOrientation = false) {
@@ -364,8 +286,8 @@
             
             if (enableAutoOrientation) {
                 let scores = {};
-                const evaluationAngles = [0, 90, 180, 270];
 
+                const evaluationAngles = [0, 90, 180, 270];
                 for (let angle of evaluationAngles) {
                     if (angle === 90 || angle === 270) {
                         processingCanvas.width = nativeH; processingCanvas.height = nativeW;
@@ -385,6 +307,7 @@
                     scores[angle] = calculateHumanReadingScore(ctx, processingCanvas.width, processingCanvas.height);
                 }
 
+                // Determine best legibility angle mapping baseline curves
                 let optimumAngle = 0;
                 let highestScore = scores[0];
 
@@ -393,11 +316,6 @@
                         highestScore = scores[angle];
                         optimumAngle = angle;
                     }
-                }
-
-                // Precision Buffer: Prevent accidental jumping unless alignment score is decisively higher
-                if (optimumAngle !== 0 && scores[optimumAngle] < (scores[0] * 1.55)) {
-                    optimumAngle = 0;
                 }
 
                 targetRotation = optimumAngle;
@@ -424,32 +342,68 @@
             const w = processingCanvas.width;
             const h = processingCanvas.height;
 
+            // BLACK POLARITY DETECTION LAYER
+            let cornerBrightnessSum = 0;
+            let samplePoints = [
+                0,                                    
+                (w - 1) * 4,                          
+                (h - 1) * w * 4,                      
+                ((h - 1) * w + (w - 1)) * 4           
+            ];
+            samplePoints.forEach(idx => {
+                cornerBrightnessSum += (pixels[idx] + pixels[idx+1] + pixels[idx+2]) / 3;
+            });
+            let averageCornerBrightness = cornerBrightnessSum / 4;
+            let shouldInvertColors = averageCornerBrightness < 120; 
+
             let minX = w, maxX = 0, minY = h, maxY = 0;
             let inkDetected = false;
 
-            // HIGH-FIDELITY LUMINANCE COMPRESSION RENDERING
+            const monoMap = new Uint8Array(w * h);
             for (let i = 0; i < pixels.length; i += 4) {
                 let r = pixels[i];
                 let g = pixels[i+1];
                 let b = pixels[i+2];
+                
+                if (shouldInvertColors) {
+                    r = 255 - r;
+                    g = 255 - g;
+                    b = 255 - b;
+                }
+                monoMap[i / 4] = Math.floor(r * 0.299 + g * 0.587 + b * 0.114);
+            }
 
-                let luminosity = Math.floor(r * 0.299 + g * 0.587 + b * 0.114);
+            const kernelRadius = 8; 
 
-                if (luminosity < 192) {
-                    let scaleTuner = luminosity / 192;
-                    pixels[i]     = Math.floor(r * scaleTuner);
-                    pixels[i + 1] = Math.floor(g * scaleTuner);
-                    pixels[i + 2] = Math.floor(b * scaleTuner);
-                    pixels[i + 3] = 255;
+            for (let y = 0; y < h; y++) {
+                for (let x = 0; x < w; x++) {
+                    const idx = (y * w + x) * 4;
+                    const monoIdx = y * w + x;
 
-                    let pixelIndex = i / 4;
-                    let x = pixelIndex % w;
-                    let y = Math.floor(pixelIndex / w);
-                    if (x < minX) minX = x; if (x > maxX) maxX = x;
-                    if (y < minY) minY = y; if (y > maxY) maxY = y;
-                    inkDetected = true;
-                } else {
-                    pixels[i] = 255; pixels[i + 1] = 255; pixels[i + 2] = 255; pixels[i + 3] = 255;
+                    const leftVal   = x > kernelRadius ? monoMap[monoIdx - kernelRadius] : monoMap[monoIdx];
+                    const rightVal  = x < w - kernelRadius ? monoMap[monoIdx + kernelRadius] : monoMap[monoIdx];
+                    const topVal    = y > kernelRadius ? monoMap[monoIdx - kernelRadius * w] : monoMap[monoIdx];
+                    const bottomVal = y < h - kernelRadius ? monoMap[monoIdx + kernelRadius * w] : monoMap[monoIdx];
+
+                    const localBackgroundAverage = (leftVal + rightVal + topVal + bottomVal) / 4;
+                    const currentPixelLuminosity = monoMap[monoIdx];
+                    const diff = localBackgroundAverage - currentPixelLuminosity;
+                    
+                    if (diff > 7 && currentPixelLuminosity < 242) {
+                        pixels[idx]     = currentPixelLuminosity;
+                        pixels[idx + 1] = currentPixelLuminosity;
+                        pixels[idx + 2] = currentPixelLuminosity;
+                        pixels[idx + 3] = 255;
+
+                        if (x < minX) minX = x; if (x > maxX) maxX = x;
+                        if (y < minY) minY = y; if (y > maxY) maxY = y;
+                        inkDetected = true;
+                    } else {
+                        pixels[idx]     = 255;
+                        pixels[idx + 1] = 255;
+                        pixels[idx + 2] = 255;
+                        pixels[idx + 3] = 255;
+                    }
                 }
             }
             ctx.putImageData(imgData, 0, 0);
@@ -458,7 +412,7 @@
                 minX = 0; minY = 0; maxX = w; maxY = h; 
             }
 
-            const padding = 20;
+            const padding = 25;
             minX = Math.max(0, minX - padding);
             minY = Math.max(0, minY - padding);
             maxX = Math.min(w, maxX + padding);
@@ -474,19 +428,19 @@
             cropCtx.drawImage(processingCanvas, minX, minY, cropW, cropH, 0, 0, cropW, cropH);
 
             const MAX_BYTES = 18 * 1024; 
-            let quality = 0.88;
+            let quality = 0.85;
             let scale = 1.0;
             let outputBlob = null;
 
             outputBlob = await new Promise(res => cropCanvas.toBlob(res, targetOutputFormat, quality));
-            while (outputBlob.size > MAX_BYTES && quality > 0.20) {
-                quality -= 0.08; 
+            while (outputBlob.size > MAX_BYTES && quality > 0.15) {
+                quality -= 0.10; 
                 outputBlob = await new Promise(res => cropCanvas.toBlob(res, targetOutputFormat, quality));
             }
 
             let activeCanvas = cropCanvas;
-            while (outputBlob.size > MAX_BYTES && scale > 0.15) {
-                scale -= 0.12; 
+            while (outputBlob.size > MAX_BYTES && scale > 0.1) {
+                scale -= 0.15; 
                 const scaleCanvas = document.createElement('canvas');
                 scaleCanvas.width = Math.max(10, Math.floor(cropW * scale));
                 scaleCanvas.height = Math.max(10, Math.floor(cropH * scale));
@@ -515,12 +469,15 @@
 
         downloadBtn.addEventListener('click', () => {
             if (!finalOutputBlob) return;
+            
             checkAndResetDownloadCounter();
+            
             let count = parseInt(safeGetItem('sig_image_counter')) || 1;
             const downloadLink = document.createElement('a');
             downloadLink.href = URL.createObjectURL(finalOutputBlob);
             downloadLink.download = `image ${count}.jpg`;
             downloadLink.click();
+            
             safeSetItem('sig_image_counter', (count + 1).toString());
         });
     </script>
