@@ -20,11 +20,6 @@
             width: 100%;
             height: 240px;
         }
-        
-        #previewImage {
-            image-rendering: crisp-edges;
-            image-rendering: pixelated;
-        }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 antialiased text-slate-200 selection:bg-indigo-500/30">
@@ -47,7 +42,7 @@
                     <h1 class="text-2xl font-bold tracking-tight text-white">Signature Tool</h1>
                     <span class="text-[10px] font-semibold tracking-wider uppercase bg-indigo-500/10 text-indigo-400 px-2 py-0.5 rounded border border-indigo-500/20 mt-0.5">V1 Tool</span>
                 </div>
-                <p class="text-sm text-slate-400 mt-1">Instant Performance Engine (Intellectual Letter Layout Auto-Rotation)</p>
+                <p class="text-sm text-slate-400 mt-1">Advanced Document Signature Optimizer & Format Analyzer</p>
             </div>
             
             <div class="flex items-center gap-1.5 text-[11px] text-emerald-400 font-medium bg-emerald-500/5 px-2.5 py-1 rounded-full border border-emerald-500/10 shrink-0">
@@ -77,7 +72,7 @@
             
             <div id="placeholderText" class="text-center space-y-2 pointer-events-none">
                 <p class="text-sm font-medium text-slate-400">Click to upload or press <span class="text-indigo-400">Ctrl + V</span> to paste</p>
-                <p class="text-xs text-slate-500">Instant extraction. Smart character alignment engine fixes upside-down orientations.</p>
+                <p class="text-xs text-slate-500">Intelligent orientation tracking optimized for cursive handwriting structures</p>
             </div>
 
             <div id="previewBox" class="preview-container hidden rounded-lg p-1.5 bg-white shadow-xl">
@@ -243,34 +238,29 @@
             rawImageInstance.src = src;
         }
 
-        // COGNITIVE BOUNDING PROJECTION PROFILE MATCHING ENGINE
-        function calculateAlphabetOrientationScore(ctx, w, h) {
+        // UPGRADED MULTI-SPECTRAL TYPOGRAPHIC PROFILE ORIENTATION ENGINE
+        function calculateHumanReadingScore(ctx, w, h) {
             const imgData = ctx.getImageData(0, 0, w, h);
             const data = imgData.data;
 
-            // Sample general background density
+            // 1. Detect background ambient polarity
             let cornerBrightnessSum = 0;
             let corners = [0, (w - 1) * 4, (h - 1) * w * 4, ((h - 1) * w + (w - 1)) * 4];
             corners.forEach(idx => cornerBrightnessSum += (data[idx] + data[idx+1] + data[idx+2]) / 3);
-            let avgBackgroundBrightness = cornerBrightnessSum / 4;
-            let isDarkBg = avgBackgroundBrightness < 125;
+            let avgBg = cornerBrightnessSum / 4;
+            let isDarkBg = avgBg < 125;
 
             let minX = w, maxX = 0, minY = h, maxY = 0;
             
-            // Isolate text core boundaries
-            for (let y = 0; y < h; y++) {
-                for (let x = 0; x < w; x++) {
+            // 2. Scan content bounding coordinates, masking out outer 3% noise artifacts
+            let marginX = Math.floor(w * 0.03);
+            let marginY = Math.floor(h * 0.03);
+
+            for (let y = marginY; y < h - marginY; y++) {
+                for (let x = marginX; x < w - marginX; x++) {
                     let idx = (y * w + x) * 4;
                     let b = (data[idx] + data[idx+1] + data[idx+2]) / 3;
-                    
-                    // Adaptive local stroke detection threshold
-                    let isInk = false;
-                    if (isDarkBg) {
-                        isInk = b > (avgBackgroundBrightness + 25);
-                    } else {
-                        isInk = b < (avgBackgroundBrightness - 25);
-                    }
-
+                    let isInk = isDarkBg ? (b > avgBg + 20) : (b < avgBg - 20);
                     if (isInk && data[idx+3] > 40) {
                         if (x < minX) minX = x; if (x > maxX) maxX = x;
                         if (y < minY) minY = y; if (y > maxY) maxY = y;
@@ -284,37 +274,68 @@
             let cropH = maxY - minY + 1;
 
             let rowProfiles = new Array(cropH).fill(0);
-            let colProfiles = new Array(cropW).fill(0);
+            let totalInkPixels = 0;
 
+            // 3. Map Projection Profiles inside Isolated Box
             for (let y = minY; y <= maxY; y++) {
                 for (let x = minX; x <= maxX; x++) {
                     let idx = (y * w + x) * 4;
                     let b = (data[idx] + data[idx+1] + data[idx+2]) / 3;
-                    let isInk = isDarkBg ? b > (avgBackgroundBrightness + 25) : b < (avgBackgroundBrightness - 25);
+                    let isInk = isDarkBg ? (b > avgBg + 20) : (b < avgBg - 20);
                     if (isInk && data[idx+3] > 40) {
                         rowProfiles[y - minY]++;
-                        colProfiles[x - minX]++;
+                        totalInkPixels++;
                     }
                 }
             }
 
-            let aspectWeight = (cropW / cropH);
+            if (totalInkPixels === 0) return 0;
 
-            // Compute structural variation metrics for book typography layouts
-            let columnTotalVariation = 0;
-            for (let x = 1; x < cropW; x++) {
-                columnTotalVariation += Math.abs(colProfiles[x] - colProfiles[x - 1]);
-            }
+            // Heuristic A: Text lines/signatures structurally favor wide landscape bounds
+            let aspectScore = cropW / cropH;
 
-            let topDensity = 0, bottomDensity = 0;
-            let midPoint = Math.floor(cropH / 2);
+            // Heuristic B: Row profile variance checks for distinct peaks (horizontal) vs blurs (vertical)
+            let meanRowInk = totalInkPixels / cropH;
+            let rowVariance = 0;
             for (let y = 0; y < cropH; y++) {
-                if (y < midPoint) topDensity += rowProfiles[y];
-                else bottomDensity += rowProfiles[y];
+                rowVariance += Math.pow(rowProfiles[y] - meanRowInk, 2);
             }
-            let baselineWeight = bottomDensity > topDensity ? 1.5 : 0.4;
+            rowVariance = rowVariance / cropH;
 
-            return columnTotalVariation * aspectWeight * baselineWeight;
+            // Heuristic C: Find the baseline/x-height primary peak row
+            let peakRowIndex = 0;
+            let maxInkVal = -1;
+            for (let y = 0; y < cropH; y++) {
+                if (rowProfiles[y] > maxInkVal) {
+                    maxInkVal = rowProfiles[y];
+                    peakRowIndex = y;
+                }
+            }
+
+            // Upright alignment anchors the dense baseline peak in the lower half of the text box
+            let peakLocationRatio = peakRowIndex / cropH;
+            let baselineLocationWeight = 1.0;
+            if (peakLocationRatio >= 0.45 && peakLocationRatio <= 0.85) {
+                baselineLocationWeight = 2.5; 
+            } else if (peakLocationRatio < 0.40) {
+                baselineLocationWeight = 0.3; 
+            }
+
+            // Heuristic D: Boundary drop-off sharpness (baseline boundaries drop off faster than ascenders)
+            let topBoundaryGradient = 0;
+            let bottomBoundaryGradient = 0;
+            let boundZone = Math.max(1, Math.floor(cropH * 0.20)); 
+
+            for (let y = 1; y <= boundZone; y++) {
+                topBoundaryGradient += Math.abs(rowProfiles[y] - rowProfiles[y - 1]);
+            }
+            for (let y = cropH - boundZone; y < cropH; y++) {
+                bottomBoundaryGradient += Math.abs(rowProfiles[y] - rowProfiles[y - 1]);
+            }
+
+            let boundarySharpnessWeight = (bottomBoundaryGradient > topBoundaryGradient) ? 1.8 : 0.6;
+
+            return aspectScore * rowVariance * baselineLocationWeight * boundarySharpnessWeight;
         }
 
         async function applySignatureTransformation(enableAutoOrientation = false) {
@@ -348,7 +369,7 @@
                     ctx.drawImage(rawImageInstance, -nativeW / 2, -nativeH / 2);
                     ctx.setTransform(1, 0, 0, 1, 0, 0);
 
-                    scores[angle] = calculateAlphabetOrientationScore(ctx, processingCanvas.width, processingCanvas.height);
+                    scores[angle] = calculateHumanReadingScore(ctx, processingCanvas.width, processingCanvas.height);
                 }
 
                 let optimumAngle = 0;
@@ -371,7 +392,6 @@
                 processingCanvas.width = nativeW; processingCanvas.height = nativeH;
             }
 
-            ctx.imageSmoothingEnabled = false;
             ctx.clearRect(0, 0, processingCanvas.width, processingCanvas.height);
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, processingCanvas.width, processingCanvas.height);
@@ -386,49 +406,57 @@
             const w = processingCanvas.width;
             const h = processingCanvas.height;
 
-            // HIGH-FIDELITY AMBIENT COLOR POLARITY AND GRAY PATTERN ATTENUATION LOOP
             let cornerBrightnessSum = 0;
             let samplePoints = [0, (w - 1) * 4, (h - 1) * w * 4, ((h - 1) * w + (w - 1)) * 4];
             samplePoints.forEach(idx => {
                 cornerBrightnessSum += (pixels[idx] + pixels[idx+1] + pixels[idx+2]) / 3;
             });
-            let ambientBackgroundBrightness = cornerBrightnessSum / 4;
-            let shouldInvertColors = ambientBackgroundBrightness < 125; 
+            let averageCornerBrightness = cornerBrightnessSum / 4;
+            let shouldInvertColors = averageCornerBrightness < 120; 
 
             let minX = w, maxX = 0, minY = h, maxY = 0;
             let inkDetected = false;
 
+            const monoMap = new Uint8Array(w * h);
             for (let i = 0; i < pixels.length; i += 4) {
                 let r = pixels[i]; let g = pixels[i+1]; let b = pixels[i+2];
-                
                 if (shouldInvertColors) {
                     r = 255 - r; g = 255 - g; b = 255 - b;
                 }
+                monoMap[i / 4] = Math.floor(r * 0.299 + g * 0.587 + b * 0.114);
+            }
 
-                let luma = Math.floor(r * 0.299 + g * 0.587 + b * 0.114);
-                let chroma = Math.max(Math.abs(r - g), Math.abs(r - b), Math.abs(g - b));
+            const kernelRadius = 8; 
 
-                // NEW ANTI-TEXTURE ADVANCED HIGH-PASS CLAMP
-                // If background is medium gray (e.g. luma ~140-180), we isolate strokes by checking 
-                // clear local contrast dropping below the calculated ambient backdrop level.
-                let adaptiveLumaThreshold = shouldInvertColors ? 195 : Math.min(195, ambientBackgroundBrightness - 25);
-                
-                if (luma < adaptiveLumaThreshold || (chroma > 22 && luma < 225)) {
-                    let hardInkValue = luma < 120 ? 0 : 35;
-                    pixels[i]     = hardInkValue;
-                    pixels[i + 1] = hardInkValue;
-                    pixels[i + 2] = hardInkValue;
-                    pixels[i + 3] = 255;
+            for (let y = 0; y < h; y++) {
+                for (let x = 0; x < w; x++) {
+                    const idx = (y * w + x) * 4;
+                    const monoIdx = y * w + x;
 
-                    let pxIdx = i / 4;
-                    let x = pxIdx % w;
-                    let y = Math.floor(pxIdx / w);
-                    if (x < minX) minX = x; if (x > maxX) maxX = x;
-                    if (y < minY) minY = y; if (y > maxY) maxY = y;
-                    inkDetected = true;
-                } else {
-                    // Absolute pristine white canvas fill for texture suppression
-                    pixels[i] = 255; pixels[i + 1] = 255; pixels[i + 2] = 255; pixels[i + 3] = 255;
+                    const leftVal   = x > kernelRadius ? monoMap[monoIdx - kernelRadius] : monoMap[monoIdx];
+                    const rightVal  = x < w - kernelRadius ? monoMap[monoIdx + kernelRadius] : monoMap[monoIdx];
+                    const topVal    = y > kernelRadius ? monoMap[monoIdx - kernelRadius * w] : monoMap[monoIdx];
+                    const bottomVal = y < h - kernelRadius ? monoMap[monoIdx + kernelRadius * w] : monoMap[monoIdx];
+
+                    const localBackgroundAverage = (leftVal + rightVal + topVal + bottomVal) / 4;
+                    const currentPixelLuminosity = monoMap[monoIdx];
+                    const diff = localBackgroundAverage - currentPixelLuminosity;
+                    
+                    if (diff > 7 && currentPixelLuminosity < 242) {
+                        pixels[idx]     = currentPixelLuminosity;
+                        pixels[idx + 1] = currentPixelLuminosity;
+                        pixels[idx + 2] = currentPixelLuminosity;
+                        pixels[idx + 3] = 255;
+
+                        if (x < minX) minX = x; if (x > maxX) maxX = x;
+                        if (y < minY) minY = y; if (y > maxY) maxY = y;
+                        inkDetected = true;
+                    } else {
+                        pixels[idx]     = 255;
+                        pixels[idx + 1] = 255;
+                        pixels[idx + 2] = 255;
+                        pixels[idx + 3] = 255;
+                    }
                 }
             }
             ctx.putImageData(imgData, 0, 0);
@@ -437,7 +465,7 @@
                 minX = 0; minY = 0; maxX = w; maxY = h; 
             }
 
-            const padding = 15;
+            const padding = 25;
             minX = Math.max(0, minX - padding);
             minY = Math.max(0, minY - padding);
             maxX = Math.min(w, maxX + padding);
@@ -450,35 +478,33 @@
             cropCanvas.width = cropW;
             cropCanvas.height = cropH;
             const cropCtx = cropCanvas.getContext('2d');
-            cropCtx.imageSmoothingEnabled = false;
             cropCtx.drawImage(processingCanvas, minX, minY, cropW, cropH, 0, 0, cropW, cropH);
 
-            // COMPRESSION MANAGEMENT
             const MAX_BYTES = 18 * 1024; 
-            let quality = 0.90; 
+            let quality = 0.85;
             let scale = 1.0;
             let outputBlob = null;
 
             outputBlob = await new Promise(res => cropCanvas.toBlob(res, targetOutputFormat, quality));
-            
-            while (outputBlob.size > MAX_BYTES && quality > 0.75) {
-                quality -= 0.05; 
+            while (outputBlob.size > MAX_BYTES && quality > 0.15) {
+                quality -= 0.10; 
                 outputBlob = await new Promise(res => cropCanvas.toBlob(res, targetOutputFormat, quality));
             }
 
             let activeCanvas = cropCanvas;
-            while (outputBlob.size > MAX_BYTES && scale > 0.15) {
-                scale -= 0.10; 
+            while (outputBlob.size > MAX_BYTES && scale > 0.1) {
+                scale -= 0.15; 
                 const scaleCanvas = document.createElement('canvas');
                 scaleCanvas.width = Math.max(10, Math.floor(cropW * scale));
                 scaleCanvas.height = Math.max(10, Math.floor(cropH * scale));
                 
                 const scaleCtx = scaleCanvas.getContext('2d');
-                scaleCtx.imageSmoothingEnabled = false; 
+                scaleCtx.imageSmoothingEnabled = true;
+                scaleCtx.imageSmoothingQuality = 'high';
                 scaleCtx.drawImage(cropCanvas, 0, 0, scaleCanvas.width, scaleCanvas.height);
                 
                 activeCanvas = scaleCanvas;
-                outputBlob = await new Promise(res => activeCanvas.toBlob(res, targetOutputFormat, quality));
+                outputBlob = await new Promise(res => activeCanvas.toBlob(res, targetOutputFormat, Math.max(0.1, quality)));
             }
 
             finalOutputBlob = outputBlob;
