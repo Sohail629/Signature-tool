@@ -72,7 +72,7 @@
             
             <div id="placeholderText" class="text-center space-y-2 pointer-events-none">
                 <p class="text-sm font-medium text-slate-400">Click to upload or press <span class="text-indigo-400">Ctrl + V</span> to paste</p>
-                <p class="text-xs text-slate-500">Intelligent orientation tracking optimized for cursive handwriting structures</p>
+                <p class="text-xs text-slate-500">Intelligent balance tuning for light, dark, or black signature templates</p>
             </div>
 
             <div id="previewBox" class="preview-container hidden rounded-lg p-1.5 bg-white shadow-xl">
@@ -238,7 +238,7 @@
             rawImageInstance.src = src;
         }
 
-        // OPTIMIZED ANALYZER ENGINE: Evaluates handwriting density alignments
+        // RE-ENGINEERED HORIZONTAL DENSITY PROFILER (Optimized for continuous cursive and mixed handwriting styles)
         function calculateHumanReadingScore(ctx, w, h) {
             const imgData = ctx.getImageData(0, 0, w, h);
             const data = imgData.data;
@@ -246,7 +246,6 @@
             let rowProfiles = new Array(h).fill(0);
             let colProfiles = new Array(w).fill(0);
 
-            // Populate pixel profiles mapping threshold points
             for (let y = 0; y < h; y++) {
                 for (let x = 0; x < w; x++) {
                     let idx = (y * w + x) * 4;
@@ -268,8 +267,8 @@
             let horizontalVariance = getProfileVariance(rowProfiles);
             let verticalVariance = getProfileVariance(colProfiles);
 
-            // Natural human reading layout favors high rows variance and flat spread column profile variance
             if (horizontalVariance === 0 || verticalVariance === 0) return 0;
+            // Upright human reading layouts align heavily along dense horizontal paths, producing a maximized profile ratio
             return (horizontalVariance / (verticalVariance + 0.1));
         }
 
@@ -307,7 +306,6 @@
                     scores[angle] = calculateHumanReadingScore(ctx, processingCanvas.width, processingCanvas.height);
                 }
 
-                // Determine best legibility angle mapping baseline curves
                 let optimumAngle = 0;
                 let highestScore = scores[0];
 
@@ -342,7 +340,7 @@
             const w = processingCanvas.width;
             const h = processingCanvas.height;
 
-            // BLACK POLARITY DETECTION LAYER
+            // INTEGRATED AUTO-POLARITY INVERSION FILTER LAYER
             let cornerBrightnessSum = 0;
             let samplePoints = [
                 0,                                    
