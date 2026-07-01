@@ -72,7 +72,7 @@
             
             <div id="placeholderText" class="text-center space-y-2 pointer-events-none">
                 <p class="text-sm font-medium text-slate-400">Click to upload or press <span class="text-indigo-400">Ctrl + V</span> to paste</p>
-                <p class="text-xs text-slate-500">Intelligent balance tuning for light, dark, or black signature templates</p>
+                <p class="text-xs text-slate-500">Automated four-way orientation extraction optimized for human reading standards</p>
             </div>
 
             <div id="previewBox" class="preview-container hidden rounded-lg p-1.5 bg-white shadow-xl">
@@ -218,7 +218,7 @@
             if (!file || !file.type.match('image.*')) return;
             initialSizeKBs = (file.size / 1024).toFixed(1);
             
-            downloadBtn.textContent = "Processing layout arrays...";
+            downloadBtn.textContent = "Processing orientation arrays...";
             downloadBtn.disabled = true;
             
             const reader = new FileReader();
@@ -238,11 +238,12 @@
             rawImageInstance.src = src;
         }
 
-        // RE-ENGINEERED HORIZONTAL DENSITY PROFILER (Optimized for continuous cursive and mixed handwriting styles)
+        // HUMAN TYPOGRAPHY & CHARACTER ANGLE EVALUATOR
         function calculateHumanReadingScore(ctx, w, h) {
             const imgData = ctx.getImageData(0, 0, w, h);
             const data = imgData.data;
 
+            let binaryGrid = new Uint8Array(w * h);
             let rowProfiles = new Array(h).fill(0);
             let colProfiles = new Array(w).fill(0);
 
@@ -250,26 +251,84 @@
                 for (let x = 0; x < w; x++) {
                     let idx = (y * w + x) * 4;
                     let brightness = (data[idx] + data[idx+1] + data[idx+2]) / 3;
-                    if (data[idx+3] > 40 && brightness < 210) {
+                    // Detect ink components vs whitespace
+                    if (data[idx+3] > 40 && brightness < 205) {
+                        binaryGrid[y * w + x] = 1;
                         rowProfiles[y]++;
                         colProfiles[x]++;
                     }
                 }
             }
 
-            const getProfileVariance = (arr) => {
+            // Find isolated character structures / components using basic segmentation matching
+            let visited = new Uint8Array(w * h);
+            let typographicComponents = [];
+            const step = 3; 
+
+            for (let y = 4; y < h - 4; y += step) {
+                for (let x = 4; x < w - 4; x += step) {
+                    let idx = y * w + x;
+                    if (binaryGrid[idx] === 1 && visited[idx] === 0) {
+                        let cMinX = x, cMaxX = x, cMinY = y, cMaxY = y;
+                        let queue = [idx];
+                        visited[idx] = 1;
+                        let pixelsInComponent = 0;
+
+                        while(queue.length > 0 && pixelsInComponent < 600) {
+                            let curr = queue.shift();
+                            pixelsInComponent++;
+                            let cx = curr % w;
+                            let cy = Math.floor(curr / w);
+
+                            if (cx < cMinX) cMinX = cx; if (cx > cMaxX) cMaxX = cx;
+                            if (cy < cMinY) cMinY = cy; if (cy > cMaxY) cMaxY = cy;
+
+                            let neighbors = [curr - 1, curr + 1, curr - w, curr + w];
+                            for(let n of neighbors) {
+                                if (n >= 0 && n < w*h && binaryGrid[n] === 1 && visited[n] === 0) {
+                                    visited[n] = 1;
+                                    queue.push(n);
+                                }
+                            }
+                        }
+
+                        let compW = cMaxX - cMinX + 1;
+                        let compH = cMaxY - cMinY + 1;
+                        if (compW > 6 && compH > 6) {
+                            typographicComponents.push({ w: compW, h: compH, area: pixelsInComponent });
+                        }
+                    }
+                }
+            }
+
+            let coreTypographyScore = 0;
+
+            // Rule 1: Human reading properties favor upright letter proportions (aspect ratio h/w usually between 0.65 and 3.0)
+            if (typographicComponents.length >= 2) {
+                typographicComponents.forEach(comp => {
+                    let aspect = comp.h / comp.w;
+                    if (aspect >= 0.65 && aspect <= 3.2) {
+                        coreTypographyScore += 45; 
+                    }
+                });
+            }
+
+            // Rule 2: Fallback to baseline profile variance mapping if cursive strokes are completely linked
+            const getVariance = (arr) => {
                 const active = arr.filter(v => v > 1);
                 if (active.length === 0) return 0;
                 const mean = active.reduce((a, b) => a + b, 0) / active.length;
                 return arr.reduce((s, v) => s + Math.pow(v - mean, 2), 0) / arr.length;
             };
 
-            let horizontalVariance = getProfileVariance(rowProfiles);
-            let verticalVariance = getProfileVariance(colProfiles);
+            let rowVariance = getVariance(rowProfiles);
+            let colVariance = getVariance(colProfiles);
 
-            if (horizontalVariance === 0 || verticalVariance === 0) return 0;
-            // Upright human reading layouts align heavily along dense horizontal paths, producing a maximized profile ratio
-            return (horizontalVariance / (verticalVariance + 0.1));
+            if (rowVariance > 0 && colVariance > 0) {
+                coreTypographyScore += (rowVariance / (colVariance + 0.1)) * 12;
+            }
+
+            return coreTypographyScore;
         }
 
         async function applySignatureTransformation(enableAutoOrientation = false) {
@@ -285,8 +344,8 @@
             
             if (enableAutoOrientation) {
                 let scores = {};
-
                 const evaluationAngles = [0, 90, 180, 270];
+
                 for (let angle of evaluationAngles) {
                     if (angle === 90 || angle === 270) {
                         processingCanvas.width = nativeH; processingCanvas.height = nativeW;
@@ -306,6 +365,7 @@
                     scores[angle] = calculateHumanReadingScore(ctx, processingCanvas.width, processingCanvas.height);
                 }
 
+                // Pick the orientation that scores highest against natural upright text rules
                 let optimumAngle = 0;
                 let highestScore = scores[0];
 
@@ -340,14 +400,9 @@
             const w = processingCanvas.width;
             const h = processingCanvas.height;
 
-            // INTEGRATED AUTO-POLARITY INVERSION FILTER LAYER
+            // DYNAMIC INVERSION DETECTOR
             let cornerBrightnessSum = 0;
-            let samplePoints = [
-                0,                                    
-                (w - 1) * 4,                          
-                (h - 1) * w * 4,                      
-                ((h - 1) * w + (w - 1)) * 4           
-            ];
+            let samplePoints = [0, (w - 1) * 4, (h - 1) * w * 4, ((h - 1) * w + (w - 1)) * 4];
             samplePoints.forEach(idx => {
                 cornerBrightnessSum += (pixels[idx] + pixels[idx+1] + pixels[idx+2]) / 3;
             });
@@ -364,9 +419,7 @@
                 let b = pixels[i+2];
                 
                 if (shouldInvertColors) {
-                    r = 255 - r;
-                    g = 255 - g;
-                    b = 255 - b;
+                    r = 255 - r; g = 255 - g; b = 255 - b;
                 }
                 monoMap[i / 4] = Math.floor(r * 0.299 + g * 0.587 + b * 0.114);
             }
@@ -397,10 +450,7 @@
                         if (y < minY) minY = y; if (y > maxY) maxY = y;
                         inkDetected = true;
                     } else {
-                        pixels[idx]     = 255;
-                        pixels[idx + 1] = 255;
-                        pixels[idx + 2] = 255;
-                        pixels[idx + 3] = 255;
+                        pixels[idx]     = 255; pixels[idx + 1] = 255; pixels[idx + 2] = 255; pixels[idx + 3] = 255;
                     }
                 }
             }
@@ -467,15 +517,12 @@
 
         downloadBtn.addEventListener('click', () => {
             if (!finalOutputBlob) return;
-            
             checkAndResetDownloadCounter();
-            
             let count = parseInt(safeGetItem('sig_image_counter')) || 1;
             const downloadLink = document.createElement('a');
             downloadLink.href = URL.createObjectURL(finalOutputBlob);
             downloadLink.download = `image ${count}.jpg`;
             downloadLink.click();
-            
             safeSetItem('sig_image_counter', (count + 1).toString());
         });
     </script>
