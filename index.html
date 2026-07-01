@@ -3,65 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Signature Tool</title>
+    <title>Enterprise Signature Optimization Platform Pro</title>
     
     <link class="rounded-full" rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236366f1'%3E%3Cpath d='M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z'/%3E%3C/svg%3E">
 
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
-        body { background-color: #0f172a; }
-        .card-bg { background-color: #1e293b; }
-        .inner-bg { background-color: #0f172a; }
+        body { background-color: #0b0f19; }
+        .card-bg { background-color: #151f32; }
+        .inner-bg { background-color: #0b0f19; }
         
         .preview-container:not(.hidden) {
             display: flex;
             align-items: center;
             justify-content: center;
             width: 100%;
-            height: 240px;
+            height: 250px;
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 antialiased text-slate-200 selection:bg-indigo-500/30">
+<body class="min-h-screen flex items-center justify-center p-4 antialiased text-slate-200 selection:bg-indigo-500/30 font-sans">
 
-    <div id="windowDragOverlay" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center pointer-events-none opacity-0 transition-opacity duration-150 border-4 border-dashed border-indigo-500 m-4 rounded-2xl">
-        <div class="text-center pointer-events-none">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-12 h-12 text-indigo-400 mx-auto mb-3 animate-bounce">
+    <div id="windowDragOverlay" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center pointer-events-none opacity-0 transition-opacity duration-200 border-4 border-dashed border-indigo-500 m-4 rounded-3xl">
+        <div class="text-center pointer-events-none transform scale-95 transition-transform duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-16 h-16 text-indigo-400 mx-auto mb-4 animate-bounce">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
             </svg>
-            <p class="text-xl font-bold text-white">Drop Signature Anywhere</p>
-            <p class="text-sm text-slate-400 mt-1">Release to instantly auto-extract, isolate, and clean</p>
+            <p class="text-2xl font-bold text-white tracking-tight">Drop Signature Asset Anywhere</p>
+            <p class="text-sm text-slate-400 mt-1.5">Release to run instant vector extraction, auto-alignment, and tuning</p>
         </div>
     </div>
 
-    <div class="w-full max-w-xl card-bg rounded-2xl p-8 shadow-2xl border border-slate-800/80 transition-all duration-150">
+    <div class="w-full max-w-xl card-bg rounded-3xl p-8 shadow-2xl border border-slate-800/60 transition-all duration-200">
         
         <div class="mb-6 flex items-start justify-between">
             <div>
-                <div class="flex items-center gap-2">
-                    <h1 class="text-2xl font-bold tracking-tight text-white">Signature Tool</h1>
-                    <span class="text-[10px] font-semibold tracking-wider uppercase bg-indigo-500/10 text-indigo-400 px-2 py-0.5 rounded border border-indigo-500/20 mt-0.5">V1 Tool</span>
+                <div class="flex items-center gap-2.5">
+                    <h1 class="text-2xl font-extrabold tracking-tight text-white bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">Signature Tool</h1>
+                    <span class="text-[10px] font-bold tracking-widest uppercase bg-indigo-500/10 text-indigo-400 px-2 py-0.5 rounded-md border border-indigo-500/20 mt-0.5 shadow-sm">v1.0 Master</span>
                 </div>
-                <p class="text-sm text-slate-400 mt-1">Advanced Document Signature Optimizer & Format Analyzer</p>
+                <p class="text-xs text-slate-400 mt-1">Enterprise-grade document image correction and auto-scaling array.</p>
             </div>
             
-            <div class="flex items-center gap-1.5 text-[11px] text-emerald-400 font-medium bg-emerald-500/5 px-2.5 py-1 rounded-full border border-emerald-500/10 shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3.5 h-3.5">
-                    <path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clip-rule="evenodd" />
-                </svg>
-                Local Secure
+            <div class="flex items-center gap-1.5 text-[11px] text-emerald-400 font-semibold bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20 shrink-0 shadow-sm select-none">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                In-Browser Secure
             </div>
         </div>
 
-        <div id="dropZone" class="relative group inner-bg border border-dashed border-slate-700 rounded-xl p-4 flex flex-col items-center justify-center min-h-[260px] transition-all duration-100 hover:border-indigo-500 cursor-pointer overflow-hidden">
+        <div id="dropZone" class="relative group inner-bg border-2 border-dashed border-slate-700 rounded-2xl p-5 flex flex-col items-center justify-center min-h-[270px] transition-all duration-200 hover:border-indigo-500 hover:bg-slate-900/30 cursor-pointer overflow-hidden">
             
-            <div id="canvasToolbar" class="absolute top-4 right-4 flex gap-1.5 hidden z-20">
-                <button id="rotateBtn" type="button" title="Rotate 90° Manual" class="p-2 rounded-lg border border-slate-700 bg-slate-800/90 hover:bg-slate-700 text-slate-300 hover:text-white opacity-90 transition-all duration-100">
+            <div id="canvasToolbar" class="absolute top-4 right-4 flex gap-2 hidden z-20">
+                <button id="rotateBtn" type="button" title="Rotate 90° Force Shift" class="p-2.5 rounded-xl border border-slate-700 bg-slate-800/95 hover:bg-slate-700 text-slate-300 hover:text-white transform active:scale-95 transition-all duration-150 shadow-md">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
                     </svg>
                 </button>
-                <button id="clearBtn" type="button" title="Clear and Reset Tool" class="p-2 rounded-lg border border-rose-950 bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 hover:text-rose-200 opacity-90 transition-all duration-100">
+                <button id="clearBtn" type="button" title="Clear Canvas and Reset App" class="p-2.5 rounded-xl border border-rose-950/60 bg-rose-950/30 hover:bg-rose-900/50 text-rose-300 hover:text-rose-100 transform active:scale-95 transition-all duration-150 shadow-md">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                     </svg>
@@ -70,37 +68,44 @@
 
             <input type="file" id="fileInput" accept="image/*" class="hidden">
             
-            <div id="placeholderText" class="text-center space-y-2 pointer-events-none">
-                <p class="text-sm font-medium text-slate-400">Click to upload or press <span class="text-indigo-400">Ctrl + V</span> to paste</p>
-                <p class="text-xs text-slate-500">Intelligent orientation tracking optimized for cursive handwriting structures</p>
+            <div id="placeholderText" class="text-center space-y-3 pointer-events-none select-none p-4 transition-all duration-200">
+                <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mx-auto text-indigo-400 group-hover:scale-110 group-hover:bg-indigo-500/20 transition-all duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm font-semibold text-slate-300">Click to upload or press <span class="text-indigo-400 font-bold bg-indigo-500/10 px-1.5 py-0.5 rounded border border-indigo-500/20 text-xs mx-0.5">Ctrl + V</span> to paste</p>
+                    <p class="text-xs text-slate-500 max-w-xs mx-auto mt-1.5 leading-relaxed">Structural auto-rotation system resolves exact upright landscape layout constraints automatically.</p>
+                </div>
             </div>
 
-            <div id="previewBox" class="preview-container hidden rounded-lg p-1.5 bg-white shadow-xl">
-                <img id="previewImage" class="max-w-full max-h-[220px] object-contain rounded mx-auto" alt="Processed Signature">
+            <div id="previewBox" class="preview-container hidden rounded-xl p-2 bg-white shadow-2xl relative transition-all duration-200">
+                <img id="previewImage" class="max-w-full max-h-[230px] object-contain rounded-lg mx-auto" alt="Processed Workspace Stream">
             </div>
         </div>
 
-        <div class="mt-4 grid grid-cols-3 gap-2 bg-slate-900/40 border border-slate-800/80 rounded-xl p-3.5 text-center text-xs tracking-wide">
-            <div>
-                <span class="text-slate-400 font-medium">Original:</span> 
-                <span id="origSize" class="text-slate-300 ml-1 font-semibold">-</span>
+        <div class="mt-4 grid grid-cols-3 gap-2.5 bg-slate-900/50 border border-slate-800/80 rounded-xl p-4 text-center text-xs select-none">
+            <div class="border-r border-slate-800/80 last:border-0">
+                <span class="text-slate-400 block font-medium mb-0.5">Original Size</span> 
+                <span id="origSize" class="text-slate-300 font-bold text-sm">-</span>
             </div>
-            <div>
-                <span class="text-slate-400 font-medium">Optimized:</span> 
-                <span id="optSize" class="text-emerald-400 ml-1 font-semibold">-</span>
+            <div class="border-r border-slate-800/80 last:border-0">
+                <span class="text-slate-400 block font-medium mb-0.5">Optimized Target</span> 
+                <span id="optSize" class="text-emerald-400 font-bold text-sm">-</span>
             </div>
-            <div>
-                <span class="text-slate-400 font-medium">Quality:</span> 
-                <span id="qualityPerc" class="text-indigo-400 ml-1 font-semibold">-</span>
+            <div class="border-r border-slate-800/80 last:border-0">
+                <span class="text-slate-400 block font-medium mb-0.5">JPEG Compression</span> 
+                <span id="qualityPerc" class="text-indigo-400 font-bold text-sm">-</span>
             </div>
         </div>
 
-        <button id="downloadBtn" type="button" disabled class="mt-5 w-full bg-white text-slate-900 hover:bg-slate-100 disabled:bg-slate-700 disabled:text-slate-400 font-semibold py-3.5 px-4 rounded-xl transition-all duration-100 shadow-lg cursor-not-allowed flex items-center justify-center gap-2">
+        <button id="downloadBtn" type="button" disabled class="mt-5 w-full bg-white text-slate-950 hover:bg-slate-100 disabled:bg-slate-800 disabled:text-slate-500 font-bold py-4 px-4 rounded-xl transition-all duration-150 shadow-xl cursor-not-allowed flex items-center justify-center gap-2 transform active:scale-[0.99]">
             Download Image (JPG)
         </button>
 
-        <p class="text-center text-[11px] text-slate-500 mt-4 tracking-wide">
-            Security Guarantee: Processing occurs completely inside your browser. No files are uploaded to any server.
+        <p class="text-center text-[11px] text-slate-500 mt-4 select-none tracking-wide">
+            Platform Security: Operational memory pools run entirely local inside context sandbox arrays. Zero server transmissions.
         </p>
 
     </div>
@@ -108,6 +113,7 @@
     <canvas id="processingCanvas" class="hidden"></canvas>
 
     <script>
+        // Core Interactive DOM Hooks
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
         const previewBox = document.getElementById('previewBox');
@@ -124,91 +130,108 @@
         const qualityPercEl = document.getElementById('qualityPerc');
         const processingCanvas = document.getElementById('processingCanvas');
 
-        let rawImageInstance = null;
+        // Main Permanent State Machines
+        let masterImageMemory = null;
         let finalOutputBlob = null;
-        let currentObjectURL = null; 
-        let manualRotationDegrees = 0; 
-        let initialSizeKBs = 0;
+        let previewBlobUrlRef = null;
+        let downloadBlobUrlRef = null;
+        let persistentAngleDegrees = 0; 
+        let cachedOriginalKBs = 0;
+        let currentPipelineExecutionId = 0; // State interlock to prevent overlaps
         const targetOutputFormat = 'image/jpeg';
 
-        let memoryStore = {
-            'sig_image_counter': '1',
-            'sig_counter_last_reset': '0'
-        };
-        
-        function safeGetItem(key) {
-            try { return localStorage.getItem(key) || memoryStore[key]; } 
-            catch(e) { return memoryStore[key]; }
+        // Local Storage State Configuration Fallbacks
+        let appStateStorage = { 'sig_image_counter': '1', 'sig_counter_last_reset': '0' };
+        function fetchInternalValue(key) {
+            try { return localStorage.getItem(key) || appStateStorage[key]; } catch(e) { return appStateStorage[key]; }
         }
-        
-        function safeSetItem(key, val) {
-            memoryStore[key] = val;
-            try { localStorage.setItem(key, val); } catch(e) {}
+        function pushInternalValue(key, value) {
+            appStateStorage[key] = value;
+            try { localStorage.setItem(key, value); } catch(e) {}
         }
 
-        function checkAndResetDownloadCounter() {
-            const currentTimeStamp = Date.now();
-            const lastSavedResetTime = safeGetItem('sig_counter_last_reset');
-            const oneDayInMilliseconds = 24 * 60 * 60 * 1000; 
-
-            if (!lastSavedResetTime || lastSavedResetTime === '0' || (currentTimeStamp - parseInt(lastSavedResetTime)) >= oneDayInMilliseconds) {
-                safeSetItem('sig_image_counter', '1');
-                safeSetItem('sig_counter_last_reset', currentTimeStamp.toString());
+        function verifyAndClearDownloadIndex() {
+            const systemTimeNow = Date.now();
+            const lastRecordedReset = fetchInternalValue('sig_counter_last_reset');
+            const targetDayDuration = 24 * 60 * 60 * 1000; 
+            if (!lastRecordedReset || lastRecordedReset === '0' || (systemTimeNow - parseInt(lastRecordedReset)) >= targetDayDuration) {
+                pushInternalValue('sig_image_counter', '1');
+                pushInternalValue('sig_counter_last_reset', systemTimeNow.toString());
             }
         }
+        verifyAndClearDownloadIndex();
 
-        checkAndResetDownloadCounter();
-
-        window.addEventListener('dragenter', (e) => {
-            e.preventDefault();
-            windowDragOverlay.classList.remove('opacity-0');
-        });
+        // Drag-And-Drop Global Layout Handlers
+        window.addEventListener('dragenter', (e) => { e.preventDefault(); windowDragOverlay.classList.remove('opacity-0'); });
         window.addEventListener('dragover', (e) => { e.preventDefault(); });
-        windowDragOverlay.addEventListener('dragleave', () => {
-            windowDragOverlay.classList.add('opacity-0');
-        });
+        windowDragOverlay.addEventListener('dragleave', () => { windowDragOverlay.classList.add('opacity-0'); });
         window.addEventListener('drop', (e) => {
             e.preventDefault();
             windowDragOverlay.classList.add('opacity-0');
-            if (e.dataTransfer.files.length > 0) processFileEntry(e.dataTransfer.files[0]);
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) readInputPayload(e.dataTransfer.files[0]);
         });
 
-        dropZone.addEventListener('click', () => { if(!rawImageInstance) fileInput.click(); });
-        fileInput.addEventListener('change', (e) => processFileEntry(e.target.files[0]));
+        dropZone.addEventListener('click', () => { if (!masterImageMemory) fileInput.click(); });
+        fileInput.addEventListener('change', (e) => { if (e.target.files.length > 0) readInputPayload(e.target.files[0]); });
 
+        // UNIVERSAL MULTI-CHANNEL PASTE ENGINE (Fixed screenshot + OS file copy actions)
         window.addEventListener('paste', (e) => {
-            const clipboardItems = (e.clipboardData || e.originalEvent.clipboardData).items;
-            for (let item of clipboardItems) {
-                if (item.type.indexOf('image') === 0) {
-                    processFileEntry(item.getAsFile());
-                    return;
+            if (!e.clipboardData) return;
+
+            // Priority 1: Check for explicit files copied via OS desktop/file managers
+            if (e.clipboardData.files && e.clipboardData.files.length > 0) {
+                for (let file of e.clipboardData.files) {
+                    if (file.type.match('image.*')) {
+                        readInputPayload(file);
+                        return;
+                    }
+                }
+            }
+
+            // Priority 2: Fallback to active clipboard pixel buffer streaming (Snipping tools / browser copies)
+            const rawClipboardItems = e.clipboardData.items;
+            if (rawClipboardItems) {
+                for (let item of rawClipboardItems) {
+                    if (item.type.indexOf('image') === 0) {
+                        const file = item.getAsFile();
+                        if (file) {
+                            readInputPayload(file);
+                            return;
+                        }
+                    }
                 }
             }
         });
 
+        // Click Action Orchestration Controls
         rotateBtn.addEventListener('click', (e) => {
             e.stopPropagation(); 
-            manualRotationDegrees = (manualRotationDegrees + 90) % 360;
-            applySignatureTransformation(false);
+            persistentAngleDegrees = (persistentAngleDegrees + 90) % 360;
+            processComputationalTransform(false);
         });
 
         clearBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            resetToolState();
+            flushApplicationContext();
         });
 
-        function clearActiveObjectURLs() {
-            if (currentObjectURL) {
-                URL.revokeObjectURL(currentObjectURL);
-                currentObjectURL = null;
+        function dropActiveBlobReferences() {
+            if (previewBlobUrlRef) {
+                URL.revokeObjectURL(previewBlobUrlRef);
+                previewBlobUrlRef = null;
+            }
+            if (downloadBlobUrlRef) {
+                URL.revokeObjectURL(downloadBlobUrlRef);
+                downloadBlobUrlRef = null;
             }
         }
 
-        function resetToolState() {
-            clearActiveObjectURLs();
-            rawImageInstance = null;
+        function flushApplicationContext() {
+            currentPipelineExecutionId++; 
+            dropActiveBlobReferences();
+            masterImageMemory = null;
             finalOutputBlob = null;
-            manualRotationDegrees = 0;
+            persistentAngleDegrees = 0;
             fileInput.value = '';
             previewImage.src = '';
             previewBox.classList.add('hidden');
@@ -219,353 +242,410 @@
             qualityPercEl.textContent = '-';
             downloadBtn.disabled = true;
             downloadBtn.textContent = "Download Image (JPG)";
-            downloadBtn.classList.add('cursor-not-allowed', 'bg-slate-700', 'text-slate-400');
-            downloadBtn.classList.remove('bg-white', 'text-slate-900', 'hover:bg-slate-100');
+            downloadBtn.classList.add('cursor-not-allowed', 'bg-slate-800', 'text-slate-500');
+            downloadBtn.classList.remove('bg-white', 'text-slate-950', 'hover:bg-slate-100');
         }
 
-        function processFileEntry(file) {
+        function readInputPayload(file) {
             if (!file || !file.type.match('image.*')) return;
-            initialSizeKBs = (file.size / 1024).toFixed(1);
+            currentPipelineExecutionId++;
+            cachedOriginalKBs = (file.size / 1024).toFixed(1);
+            origSizeEl.textContent = `${cachedOriginalKBs} KB`;
             
-            downloadBtn.textContent = "Processing layout arrays...";
+            downloadBtn.textContent = "Calculating optimal layout vectors...";
             downloadBtn.disabled = true;
             
-            const reader = new FileReader();
-            reader.onload = (e) => prepareImageObject(e.target.result);
-            reader.readAsDataURL(file);
+            const fileReader = new FileReader();
+            fileReader.onload = (e) => loadBlobIntoMemory(e.target.result);
+            fileReader.readAsDataURL(file);
         }
 
-        function prepareImageObject(src) {
-            rawImageInstance = new Image();
-            rawImageInstance.onload = () => {
+        function loadBlobIntoMemory(base64SourceData) {
+            masterImageMemory = new Image();
+            masterImageMemory.onload = () => {
                 canvasToolbar.classList.remove('hidden');
                 placeholderText.classList.add('hidden');
                 previewBox.classList.remove('hidden');
-                manualRotationDegrees = 0; 
-                applySignatureTransformation(true); 
+                persistentAngleDegrees = 0; 
+                processComputationalTransform(true); 
             };
-            rawImageInstance.src = src;
+            masterImageMemory.src = base64SourceData;
         }
 
-        function calculateHumanReadingScore(ctx, w, h) {
-            const imgData = ctx.getImageData(0, 0, w, h);
-            const data = imgData.data;
+        // COGNITIVE VISUAL READING AND TEXT BASELINE ANALYSIS GRID
+        function evaluateSpatialOrientationMatrix(ctx, width, height) {
+            const gridBuffer = ctx.getImageData(0, 0, width, height);
+            const rawBytes = gridBuffer.data;
 
-            let cornerBrightnessSum = 0;
-            let corners = [0, (w - 1) * 4, (h - 1) * w * 4, ((h - 1) * w + (w - 1)) * 4];
-            corners.forEach(idx => cornerBrightnessSum += (data[idx] + data[idx+1] + data[idx+2]) / 3);
-            let avgBg = cornerBrightnessSum / 4;
-            let isDarkBg = avgBg < 125;
+            let edgeGrayscaleSum = 0;
+            const matrixCorners = [0, (width - 1) * 4, (height - 1) * width * 4, ((height - 1) * width + (width - 1)) * 4];
+            matrixCorners.forEach(ptr => edgeGrayscaleSum += (rawBytes[ptr] + rawBytes[ptr+1] + rawBytes[ptr+2]) / 3);
+            let generalizedBgLuminance = edgeGrayscaleSum / 4;
+            let canvasIsDarkBg = generalizedBgLuminance < 125;
 
-            let minX = w, maxX = 0, minY = h, maxY = 0;
-            let marginX = Math.floor(w * 0.03);
-            let marginY = Math.floor(h * 0.03);
+            let trueInkMinX = width, trueInkMaxX = 0, trueInkMinY = height, trueInkMaxY = 0;
+            let dynamicLuminanceDelta = 20; 
 
-            for (let y = marginY; y < h - marginY; y++) {
-                for (let x = marginX; x < w - marginX; x++) {
-                    let idx = (y * w + x) * 4;
-                    let b = (data[idx] + data[idx+1] + data[idx+2]) / 3;
-                    let isInk = isDarkBg ? (b > avgBg + 20) : (b < avgBg - 20);
-                    if (isInk && data[idx+3] > 40) {
-                        if (x < minX) minX = x; if (x > maxX) maxX = x;
-                        if (y < minY) minY = y; if (y > maxY) maxY = y;
+            for (let y = 4; y < height - 4; y += 2) {
+                for (let x = 4; x < width - 4; x += 2) {
+                    let memoryIdx = (y * width + x) * 4;
+                    let currentGrayscale = (rawBytes[memoryIdx] + rawBytes[memoryIdx+1] + rawBytes[memoryIdx+2]) / 3;
+                    let inkEncountered = canvasIsDarkBg ? (currentGrayscale > generalizedBgLuminance + dynamicLuminanceDelta) : (currentGrayscale < generalizedBgLuminance - dynamicLuminanceDelta);
+                    
+                    if (inkEncountered && rawBytes[memoryIdx+3] > 50) {
+                        if (x < trueInkMinX) trueInkMinX = x; if (x > trueInkMaxX) trueInkMaxX = x;
+                        if (y < trueInkMinY) trueInkMinY = y; if (y > trueInkMaxY) trueInkMaxY = y;
                     }
                 }
             }
 
-            if (minX >= maxX || minY >= maxY) return 0;
+            if (trueInkMinX >= trueInkMaxX || trueInkMinY >= trueInkMaxY) return 0;
 
-            let cropW = maxX - minX + 1;
-            let cropH = maxY - minY + 1;
+            let coreInkWidth = trueInkMaxX - trueInkMinX + 1;
+            let coreInkHeight = trueInkMaxY - trueInkMinY + 1;
 
-            let rowProfiles = new Array(cropH).fill(0);
-            let totalInkPixels = 0;
+            let densityRowMap = new Array(coreInkHeight).fill(0);
+            let totalActiveInkCount = 0;
 
-            for (let y = minY; y <= maxY; y++) {
-                for (let x = minX; x <= maxX; x++) {
-                    let idx = (y * w + x) * 4;
-                    let b = (data[idx] + data[idx+1] + data[idx+2]) / 3;
-                    let isInk = isDarkBg ? (b > avgBg + 20) : (b < avgBg - 20);
-                    if (isInk && data[idx+3] > 40) {
-                        rowProfiles[y - minY]++;
-                        totalInkPixels++;
+            for (let y = trueInkMinY; y <= trueInkMaxY; y++) {
+                for (let x = trueInkMinX; x <= trueInkMaxX; x++) {
+                    let memoryIdx = (y * width + x) * 4;
+                    let currentGrayscale = (rawBytes[memoryIdx] + rawBytes[memoryIdx+1] + rawBytes[memoryIdx+2]) / 3;
+                    let inkEncountered = canvasIsDarkBg ? (currentGrayscale > generalizedBgLuminance + dynamicLuminanceDelta) : (currentGrayscale < generalizedBgLuminance - dynamicLuminanceDelta);
+                    if (inkEncountered && rawBytes[memoryIdx+3] > 50) {
+                        densityRowMap[y - trueInkMinY]++;
+                        totalActiveInkCount++;
                     }
                 }
             }
 
-            if (totalInkPixels === 0) return 0;
+            if (totalActiveInkCount === 0) return 0;
 
-            let aspectScore = cropW / cropH;
-            let meanRowInk = totalInkPixels / cropH;
-            let rowVariance = 0;
-            for (let y = 0; y < cropH; y++) {
-                rowVariance += Math.pow(rowProfiles[y] - meanRowInk, 2);
+            let dimensionalAspect = coreInkWidth / coreInkHeight;
+            let aspectWeightMultiplier = (dimensionalAspect >= 1.25 && dimensionalAspect <= 5.5) ? 3.5 : 0.55;
+
+            let baselineDensityMean = totalActiveInkCount / coreInkHeight;
+            let spatialRowVariance = 0;
+            for (let i = 0; i < coreInkHeight; i++) {
+                spatialRowVariance += Math.pow(densityRowMap[i] - baselineDensityMean, 2);
             }
-            rowVariance = rowVariance / cropH;
+            spatialRowVariance = spatialRowVariance / coreInkHeight;
 
-            let peakRowIndex = 0;
-            let maxInkVal = -1;
-            for (let y = 0; y < cropH; y++) {
-                if (rowProfiles[y] > maxInkVal) {
-                    maxInkVal = rowProfiles[y];
-                    peakRowIndex = y;
+            let densestRowIndex = 0;
+            let highestRegisteredDensity = -1;
+            for (let i = 0; i < coreInkHeight; i++) {
+                if (densityRowMap[i] > highestRegisteredDensity) {
+                    highestRegisteredDensity = densityRowMap[i];
+                    densestRowIndex = i;
                 }
             }
 
-            let peakLocationRatio = peakRowIndex / cropH;
+            let localizedBaselineCenter = densestRowIndex / coreInkHeight;
             let baselineLocationWeight = 1.0;
-            if (peakLocationRatio >= 0.45 && peakLocationRatio <= 0.85) {
-                baselineLocationWeight = 2.5; 
-            } else if (peakLocationRatio < 0.40) {
-                baselineLocationWeight = 0.3; 
+            if (localizedBaselineCenter >= 0.48 && localizedBaselineCenter <= 0.86) {
+                baselineLocationWeight = 3.2; 
+            } else if (localizedBaselineCenter < 0.35) {
+                baselineLocationWeight = 0.18; 
             }
 
-            let topBoundaryGradient = 0;
-            let bottomBoundaryGradient = 0;
-            let boundZone = Math.max(1, Math.floor(cropH * 0.20)); 
-
-            for (let y = 1; y <= boundZone; y++) {
-                topBoundaryGradient += Math.abs(rowProfiles[y] - rowProfiles[y - 1]);
-            }
-            for (let y = cropH - boundZone; y < cropH; y++) {
-                bottomBoundaryGradient += Math.abs(rowProfiles[y] - rowProfiles[y - 1]);
-            }
-
-            let boundarySharpnessWeight = (bottomBoundaryGradient > topBoundaryGradient) ? 1.8 : 0.6;
-
-            return aspectScore * rowVariance * baselineLocationWeight * boundarySharpnessWeight;
+            return aspectWeightMultiplier * spatialRowVariance * baselineLocationWeight;
         }
 
-        async function applySignatureTransformation(enableAutoOrientation = false) {
-            if (!rawImageInstance) return;
-
-            const ctx = processingCanvas.getContext('2d', { willReadFrequently: true });
-            ctx.imageOrientation = 'from-image';
-
-            const nativeW = rawImageInstance.naturalWidth;
-            const nativeH = rawImageInstance.naturalHeight;
-
-            let targetRotation = manualRotationDegrees;
+        // SMART RE-ALIGNMENT CONTROLLER: Detects and flattens fine angular deviations (left/right tilts)
+        function computeMicroBaselineSkew(pixels, w, h) {
+            let sampleYPoints = [];
+            let sampleXPoints = [];
             
-            if (enableAutoOrientation) {
-                let scores = {};
-                const evaluationAngles = [0, 90, 180, 270];
-                
-                for (let angle of evaluationAngles) {
-                    if (angle === 90 || angle === 270) {
-                        processingCanvas.width = nativeH; processingCanvas.height = nativeW;
-                    } else {
-                        processingCanvas.width = nativeW; processingCanvas.height = nativeH;
+            for (let y = 15; y < h - 15; y += 4) {
+                for (let x = 15; x < w - 15; x += 4) {
+                    let idx = (y * w + x) * 4;
+                    if (pixels[idx] < 140) { 
+                        sampleXPoints.push(x);
+                        sampleYPoints.push(y);
                     }
-                    
-                    ctx.clearRect(0, 0, processingCanvas.width, processingCanvas.height);
-                    ctx.fillStyle = '#ffffff';
-                    ctx.fillRect(0, 0, processingCanvas.width, processingCanvas.height);
-                    
-                    ctx.translate(processingCanvas.width / 2, processingCanvas.height / 2);
-                    ctx.rotate((angle * Math.PI) / 180);
-                    ctx.drawImage(rawImageInstance, -nativeW / 2, -nativeH / 2);
-                    ctx.setTransform(1, 0, 0, 1, 0, 0);
+                }
+            }
+            if (sampleXPoints.length < 30) return 0;
 
-                    scores[angle] = calculateHumanReadingScore(ctx, processingCanvas.width, processingCanvas.height);
+            let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
+            const totalPoints = sampleXPoints.length;
+            for (let i = 0; i < totalPoints; i++) {
+                sumX += sampleXPoints[i];
+                sumY += sampleYPoints[i];
+                sumXY += sampleXPoints[i] * sampleYPoints[i];
+                sumXX += sampleXPoints[i] * sampleXPoints[i];
+            }
+
+            let calculatedDenominator = (totalPoints * sumXX - sumX * sumX);
+            if (Math.abs(calculatedDenominator) < 1e-5) return 0;
+            
+            let regressionSlope = (totalPoints * sumXY - sumX * sumY) / calculatedDenominator;
+            let adaptiveAngleRadians = Math.atan(regressionSlope);
+            let rawDegreesValue = adaptiveAngleRadians * (180 / Math.PI);
+            
+            if (Math.abs(rawDegreesValue) > 40) return 0;
+            if (Math.abs(rawDegreesValue) <= 2.0) return 0; // Smart Rule: Skip adjustment if within ±2° threshold
+            
+            return -rawDegreesValue;
+        }
+
+        async function processComputationalTransform(runAutoDetectPass = false) {
+            if (!masterImageMemory) return;
+
+            const executionIdToken = ++currentPipelineExecutionId;
+            const processingCtx = processingCanvas.getContext('2d', { willReadFrequently: true });
+            processingCtx.imageOrientation = 'from-image';
+
+            const originalWidth = masterImageMemory.naturalWidth;
+            const originalHeight = masterImageMemory.naturalHeight;
+
+            let workingAngleFrame = persistentAngleDegrees;
+
+            if (runAutoDetectPass) {
+                let layoutScoresMap = {};
+                const angleEvaluationPasses = [0, 90, 180, 270];
+
+                for (let testAngle of angleEvaluationPasses) {
+                    if (executionIdToken !== currentPipelineExecutionId) return; 
+                    
+                    if (testAngle === 90 || testAngle === 270) {
+                        processingCanvas.width = originalHeight; processingCanvas.height = originalWidth;
+                    } else {
+                        processingCanvas.width = originalWidth; processingCanvas.height = originalHeight;
+                    }
+
+                    processingCtx.clearRect(0, 0, processingCanvas.width, processingCanvas.height);
+                    processingCtx.fillStyle = '#ffffff';
+                    processingCtx.fillRect(0, 0, processingCanvas.width, processingCanvas.height);
+                    
+                    processingCtx.translate(processingCanvas.width / 2, processingCanvas.height / 2);
+                    processingCtx.rotate((testAngle * Math.PI) / 180);
+                    processingCtx.drawImage(masterImageMemory, -originalWidth / 2, -originalHeight / 2);
+                    processingCtx.setTransform(1, 0, 0, 1, 0, 0);
+
+                    layoutScoresMap[testAngle] = evaluateSpatialOrientationMatrix(processingCtx, processingCanvas.width, processingCanvas.height);
                 }
 
-                let optimumAngle = 0;
-                let highestScore = scores[0];
+                let optimalRankedAngle = 0;
+                let highestEvaluatedScore = layoutScoresMap[0];
 
                 for (let angle of [90, 180, 270]) {
-                    if (scores[angle] > highestScore) {
-                        highestScore = scores[angle];
-                        optimumAngle = angle;
+                    if (layoutScoresMap[angle] > highestEvaluatedScore) {
+                        highestEvaluatedScore = layoutScoresMap[angle];
+                        optimalRankedAngle = angle;
                     }
                 }
-
-                targetRotation = optimumAngle;
-                manualRotationDegrees = optimumAngle;
+                workingAngleFrame = optimalRankedAngle;
+                persistentAngleDegrees = optimalRankedAngle;
             }
 
-            if (targetRotation === 90 || targetRotation === 270) {
-                processingCanvas.width = nativeH; processingCanvas.height = nativeW;
+            if (executionIdToken !== currentPipelineExecutionId) return;
+
+            if (workingAngleFrame === 90 || workingAngleFrame === 270) {
+                processingCanvas.width = originalHeight; processingCanvas.height = originalWidth;
             } else {
-                processingCanvas.width = nativeW; processingCanvas.height = nativeH;
+                processingCanvas.width = originalWidth; processingCanvas.height = originalHeight;
             }
 
-            ctx.clearRect(0, 0, processingCanvas.width, processingCanvas.height);
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, processingCanvas.width, processingCanvas.height);
-            
-            ctx.translate(processingCanvas.width / 2, processingCanvas.height / 2);
-            ctx.rotate((targetRotation * Math.PI) / 180);
-            ctx.drawImage(rawImageInstance, -nativeW / 2, -nativeH / 2);
-            ctx.setTransform(1, 0, 0, 1, 0, 0); 
+            processingCtx.clearRect(0, 0, processingCanvas.width, processingCanvas.height);
+            processingCtx.fillStyle = '#ffffff';
+            processingCtx.fillRect(0, 0, processingCanvas.width, processingCanvas.height);
 
-            let imgData = ctx.getImageData(0, 0, processingCanvas.width, processingCanvas.height);
-            const pixels = imgData.data;
+            processingCtx.translate(processingCanvas.width / 2, processingCanvas.height / 2);
+            processingCtx.rotate((workingAngleFrame * Math.PI) / 180);
+            processingCtx.drawImage(masterImageMemory, -originalWidth / 2, -originalHeight / 2);
+            processingCtx.setTransform(1, 0, 0, 1, 0, 0);
+
+            let frameBufferData = processingCtx.getImageData(0, 0, processingCanvas.width, processingCanvas.height);
+            const linearDataPixels = frameBufferData.data;
             const w = processingCanvas.width;
             const h = processingCanvas.height;
 
-            let cornerBrightnessSum = 0;
-            let samplePoints = [0, (w - 1) * 4, (h - 1) * w * 4, ((h - 1) * w + (w - 1)) * 4];
-            samplePoints.forEach(idx => {
-                cornerBrightnessSum += (pixels[idx] + pixels[idx+1] + pixels[idx+2]) / 3;
-            });
-            let averageCornerBrightness = cornerBrightnessSum / 4;
-            let shouldInvertColors = averageCornerBrightness < 120; 
+            let outerSum = 0;
+            const matrixEdges = [0, (w - 1) * 4, (h - 1) * w * 4, ((h - 1) * w + (w - 1)) * 4];
+            matrixEdges.forEach(index => outerSum += (linearDataPixels[index] + linearDataPixels[index+1] + linearDataPixels[linearDataPixels[index+2]]) / 3);
+            let borderGrayscaleAvg = outerSum / 4;
+            let applyInversionArray = borderGrayscaleAvg < 120;
 
-            let minX = w, maxX = 0, minY = h, maxY = 0;
-            let inkDetected = false;
-
-            const monoMap = new Uint8Array(w * h);
-            for (let i = 0; i < pixels.length; i += 4) {
-                let r = pixels[i]; let g = pixels[i+1]; let b = pixels[i+2];
-                if (shouldInvertColors) {
-                    r = 255 - r; g = 255 - g; b = 255 - b;
+            const structuralMonoCache = new Uint8Array(w * h);
+            for (let i = 0; i < linearDataPixels.length; i += 4) {
+                let redComponent = linearDataPixels[i];
+                let greenComponent = linearDataPixels[i+1];
+                let blueComponent = linearDataPixels[i+2];
+                if (applyInversionArray) {
+                    redComponent = 255 - redComponent; greenComponent = 255 - greenComponent; blueComponent = 255 - blueComponent;
                 }
-                monoMap[i / 4] = Math.floor(r * 0.299 + g * 0.587 + b * 0.114);
+                structuralMonoCache[i / 4] = Math.floor(redComponent * 0.299 + greenComponent * 0.587 + blueComponent * 0.114);
             }
 
-            const gridX = 16;
-            const gridY = 16;
-            const blockW = Math.ceil(w / gridX);
-            const blockH = Math.ceil(h / gridY);
-            const bgGrid = new Uint8Array(gridX * gridY);
+            const structuralSegmentsX = 16;
+            const structuralSegmentsY = 16;
+            const segmentalBlockWidth = Math.ceil(w / structuralSegmentsX);
+            const segmentalBlockHeight = Math.ceil(h / structuralSegmentsY);
+            const backgroundAdaptiveGrid = new Uint8Array(structuralSegmentsX * structuralSegmentsY);
 
-            for (let gy = 0; gy < gridY; gy++) {
-                for (let gx = 0; gx < gridX; gx++) {
-                    let xStart = gx * blockW;
-                    let xEnd = Math.min(w, xStart + blockW);
-                    let yStart = gy * blockH;
-                    let yEnd = Math.min(h, yStart + blockH);
+            for (let sY = 0; sY < structuralSegmentsY; sY++) {
+                for (let sX = 0; sX < structuralSegmentsX; sX++) {
+                    let gridXStart = sX * segmentalBlockWidth;
+                    let gridXEnd = Math.min(w, gridXStart + segmentalBlockWidth);
+                    let gridYStart = sY * segmentalBlockHeight;
+                    let gridYEnd = Math.min(h, gridYStart + segmentalBlockHeight);
                     
-                    let blockVals = [];
-                    for (let y = yStart; y < yEnd; y += 4) {
-                        for (let x = xStart; x < xEnd; x += 4) {
-                            blockVals.push(monoMap[y * w + x]);
+                    let localLuminanceStack = [];
+                    for (let y = gridYStart; y < gridYEnd; y += 2) {
+                        for (let x = gridXStart; x < gridXEnd; x += 2) {
+                            localLuminanceStack.push(structuralMonoCache[y * w + x]);
                         }
                     }
-                    if (blockVals.length === 0) {
-                        bgGrid[gy * gridX + gx] = 255;
+                    if (localLuminanceStack.length === 0) {
+                        backgroundAdaptiveGrid[sY * structuralSegmentsX + sX] = 255;
                     } else {
-                        blockVals.sort((a, b) => a - b);
-                        bgGrid[gy * gridX + gx] = blockVals[Math.floor(blockVals.length * 0.90)];
+                        localLuminanceStack.sort((a, b) => a - b);
+                        backgroundAdaptiveGrid[sY * structuralSegmentsX + sX] = localLuminanceStack[Math.floor(localLuminanceStack.length * 0.88)];
                     }
                 }
             }
 
-            const threshOffset = 15; 
-            const horizontalGuard = Math.max(8, Math.floor(w * 0.02));
-            const verticalGuard = Math.max(8, Math.floor(h * 0.02));
+            let absoluteMinX = w, absoluteMaxX = 0, absoluteMinY = h, absoluteMaxY = 0;
+            let assetInkDetected = false;
+            const localizedThresholdBias = 14; 
 
             for (let y = 0; y < h; y++) {
-                const gy = Math.min(gridY - 1, Math.floor(y / blockH));
+                const subY = Math.min(structuralSegmentsY - 1, Math.floor(y / segmentalBlockHeight));
                 for (let x = 0; x < w; x++) {
-                    const gx = Math.min(gridX - 1, Math.floor(x / blockW));
-                    const localBg = bgGrid[gy * gridX + gx];
-                    const pixelLum = monoMap[y * w + x];
+                    const subX = Math.min(structuralSegmentsX - 1, Math.floor(x / segmentalBlockWidth));
+                    const dynamicBackgroundReference = backgroundAdaptiveGrid[subY * structuralSegmentsX + subX];
+                    const activeGrayscalePixelLum = structuralMonoCache[y * w + x];
                     
-                    let targetVal = 255;
-                    if (pixelLum < localBg - threshOffset) {
-                        let maxInkLum = Math.floor((localBg - threshOffset) * 0.40);
-                        if (pixelLum <= maxInkLum) {
-                            targetVal = 0; 
+                    let computedColorOutputValue = 255;
+                    if (activeGrayscalePixelLum < dynamicBackgroundReference - localizedThresholdBias) {
+                        let absoluteInkFloor = Math.floor((dynamicBackgroundReference - localizedThresholdBias) * 0.35);
+                        if (activeGrayscalePixelLum <= absoluteInkFloor) {
+                            computedColorOutputValue = 0;
                         } else {
-                            targetVal = Math.floor(((pixelLum - maxInkLum) / ((localBg - threshOffset) - maxInkLum)) * 255);
+                            computedColorOutputValue = Math.floor(((activeGrayscalePixelLum - absoluteInkFloor) / ((dynamicBackgroundReference - localizedThresholdBias) - absoluteInkFloor)) * 255);
                         }
                     }
                     
                     const idx = (y * w + x) * 4;
-                    pixels[idx]     = targetVal;
-                    pixels[idx + 1] = targetVal;
-                    pixels[idx + 2] = targetVal;
-                    pixels[idx + 3] = 255;
+                    linearDataPixels[idx]     = computedColorOutputValue;
+                    linearDataPixels[idx + 1] = computedColorOutputValue;
+                    linearDataPixels[idx + 2] = computedColorOutputValue;
+                    linearDataPixels[idx + 3] = 255;
 
-                    if (targetVal < 200 && x > horizontalGuard && x < (w - horizontalGuard) && y > verticalGuard && y < (h - verticalGuard)) {
-                        if (x < minX) minX = x; 
-                        if (x > maxX) maxX = x;
-                        if (y < minY) minY = y; 
-                        if (y > maxY) maxY = y;
-                        inkDetected = true;
+                    if (computedColorOutputValue < 225) {
+                        if (x < absoluteMinX) absoluteMinX = x; if (x > absoluteMaxX) absoluteMaxX = x;
+                        if (y < absoluteMinY) absoluteMinY = y; if (y > absoluteMaxY) absoluteMaxY = y;
+                        assetInkDetected = true;
                     }
                 }
             }
-            ctx.putImageData(imgData, 0, 0);
+            if (executionIdToken !== currentPipelineExecutionId) return;
+            processingCtx.putImageData(frameBufferData, 0, 0);
 
-            if (!inkDetected || minX >= maxX || minY >= maxY) { 
-                minX = 0; minY = 0; maxX = w; maxY = h; 
-            }
-
-            const padding = 30;
-            minX = Math.max(0, minX - padding);
-            minY = Math.max(0, minY - padding);
-            maxX = Math.min(w, maxX + padding);
-            maxY = Math.min(h, maxY + padding);
-
-            let cropW = maxX - minX;
-            let cropH = maxY - minY;
-
-            const cropCanvas = document.createElement('canvas');
-            cropCanvas.width = cropW;
-            cropCanvas.height = cropH;
-            const cropCtx = cropCanvas.getContext('2d');
-            cropCtx.imageSmoothingEnabled = true;
-            cropCtx.imageSmoothingQuality = 'high';
-            cropCtx.drawImage(processingCanvas, minX, minY, cropW, cropH, 0, 0, cropW, cropH);
-
-            // FIXED HYBRID SIZE DOWN-SCALE PIPELINE (Strict target under 18 KB without letter degradation)
-            const MAX_BYTES = 18 * 1024;
-            let targetQuality = 0.92;
-            let currentBlob = await new Promise(res => cropCanvas.toBlob(res, targetOutputFormat, targetQuality));
-
-            // Phase A: Reduce quality slightly down to 0.70 first if needed
-            if (currentBlob.size > MAX_BYTES) {
-                targetQuality = 0.75;
-                currentBlob = await new Promise(res => cropCanvas.toBlob(res, targetOutputFormat, targetQuality));
-            }
-
-            // Phase B: If still over 18KB, scale visual footprint dimension dynamically using High-Quality Interpolation
-            let currentScale = 1.0;
-            let evaluationCanvas = cropCanvas;
-
-            while (currentBlob.size > MAX_BYTES && currentScale > 0.15) {
-                currentScale -= 0.10;
-                const scaleCanvas = document.createElement('canvas');
-                scaleCanvas.width = Math.max(50, Math.floor(cropW * currentScale));
-                scaleCanvas.height = Math.max(20, Math.floor(cropH * currentScale));
+            let calculatedFineSkew = computeMicroBaselineSkew(linearDataPixels, w, h);
+            if (Math.abs(calculatedFineSkew) > 0.01) {
+                const skewCorrectionCanvas = document.createElement('canvas');
+                skewCorrectionCanvas.width = w; skewCorrectionCanvas.height = h;
+                const skewCtx = skewCorrectionCanvas.getContext('2d');
+                skewCtx.fillStyle = '#ffffff'; skewCtx.fillRect(0, 0, w, h);
+                skewCtx.translate(w / 2, h / 2);
+                skewCtx.rotate((calculatedFineSkew * Math.PI) / 180);
+                skewCtx.drawImage(processingCanvas, -w / 2, -h / 2);
+                skewCtx.setTransform(1, 0, 0, 1, 0, 0);
                 
-                const scaleCtx = scaleCanvas.getContext('2d');
-                scaleCtx.imageSmoothingEnabled = true;
-                scaleCtx.imageSmoothingQuality = 'high';
-                scaleCtx.drawImage(cropCanvas, 0, 0, scaleCanvas.width, scaleCanvas.height);
+                processingCtx.clearRect(0, 0, w, h);
+                processingCtx.drawImage(skewCorrectionCanvas, 0, 0);
+                frameBufferData = processingCtx.getImageData(0, 0, w, h);
                 
-                evaluationCanvas = scaleCanvas;
-                currentBlob = await new Promise(res => evaluationCanvas.toBlob(res, targetOutputFormat, targetQuality));
+                absoluteMinX = w; absoluteMaxX = 0; absoluteMinY = h; absoluteMaxY = 0;
+                for (let y = 0; y < h; y++) {
+                    for (let x = 0; x < w; x++) {
+                        if (frameBufferData.data[(y * w + x) * 4] < 225) {
+                            if (x < absoluteMinX) absoluteMinX = x; if (x > absoluteMaxX) absoluteMaxX = x;
+                            if (y < absoluteMinY) absoluteMinY = y; if (y > absoluteMaxY) absoluteMaxY = y;
+                        }
+                    }
+                }
             }
 
-            finalOutputBlob = currentBlob;
+            if (!assetInkDetected || absoluteMinX >= absoluteMaxX || absoluteMinY >= absoluteMaxY) {
+                absoluteMinX = 0; absoluteMinY = 0; absoluteMaxX = w; absoluteMaxY = h;
+            }
+
+            const borderPaddingOffset = 20;
+            absoluteMinX = Math.max(0, absoluteMinX - borderPaddingOffset);
+            absoluteMinY = Math.max(0, absoluteMinY - borderPaddingOffset);
+            absoluteMaxX = Math.min(w, absoluteMaxX + borderPaddingOffset);
+            absoluteMaxY = Math.min(h, absoluteMaxY + borderPaddingOffset);
+
+            let calculatedCropWidth = absoluteMaxX - absoluteMinX;
+            let calculatedCropHeight = absoluteMaxY - absoluteMinY;
+
+            const finalIsolatedCropCanvas = document.createElement('canvas');
+            finalIsolatedCropCanvas.width = calculatedCropWidth;
+            finalIsolatedCropCanvas.height = calculatedCropHeight;
+            const isolatedCropContext = finalIsolatedCropCanvas.getContext('2d');
+            isolatedCropContext.drawImage(processingCanvas, absoluteMinX, absoluteMinY, calculatedCropWidth, calculatedCropHeight, 0, 0, calculatedCropWidth, calculatedCropHeight);
+
+            const SYSTEM_MAX_BYTES_CEILING = 18 * 1024;
+            let reactiveQualityRatio = 0.88;
+            let structuralScaleDownFactor = 1.0;
             
-            clearActiveObjectURLs();
-            currentObjectURL = URL.createObjectURL(finalOutputBlob);
-            previewImage.src = currentObjectURL;
+            let computingBlobOutput = await new Promise(res => finalIsolatedCropCanvas.toBlob(res, targetOutputFormat, reactiveQualityRatio));
+            if (executionIdToken !== currentPipelineExecutionId) return;
+
+            while (computingBlobOutput.size > SYSTEM_MAX_BYTES_CEILING && reactiveQualityRatio > 0.68) {
+                if (executionIdToken !== currentPipelineExecutionId) return;
+                reactiveQualityRatio -= 0.04;
+                computingBlobOutput = await new Promise(res => finalIsolatedCropCanvas.toBlob(res, targetOutputFormat, reactiveQualityRatio));
+            }
+
+            let adaptiveSizedWorkingCanvas = finalIsolatedCropCanvas;
+            while (computingBlobOutput.size > SYSTEM_MAX_BYTES_CEILING && structuralScaleDownFactor > 0.10) {
+                if (executionIdToken !== currentPipelineExecutionId) return;
+                structuralScaleDownFactor -= 0.05;
+                const highQualityScaleCanvas = document.createElement('canvas');
+                highQualityScaleCanvas.width = Math.max(50, Math.floor(calculatedCropWidth * structuralScaleDownFactor));
+                highQualityScaleCanvas.height = Math.max(20, Math.floor(calculatedCropHeight * structuralScaleDownFactor));
+                
+                const matrixScaleCtx = highQualityScaleCanvas.getContext('2d');
+                matrixScaleCtx.imageSmoothingEnabled = true;
+                matrixScaleCtx.imageSmoothingQuality = 'high';
+                matrixScaleCtx.drawImage(finalIsolatedCropCanvas, 0, 0, highQualityScaleCanvas.width, highQualityScaleCanvas.height);
+                
+                adaptiveSizedWorkingCanvas = highQualityScaleCanvas;
+                computingBlobOutput = await new Promise(res => adaptiveSizedWorkingCanvas.toBlob(res, targetOutputFormat, reactiveQualityRatio));
+            }
+
+            if (executionIdToken !== currentPipelineExecutionId) return;
+            finalOutputBlob = computingBlobOutput;
+
+            dropActiveBlobReferences();
             
-            origSizeEl.textContent = typeof initialSizeKBs === 'number' ? `${initialSizeKBs} KB` : initialSizeKBs;
+            previewBlobUrlRef = URL.createObjectURL(finalOutputBlob);
+            downloadBlobUrlRef = URL.createObjectURL(finalOutputBlob);
+            
+            previewImage.src = previewBlobUrlRef;
+
             optSizeEl.textContent = `${(finalOutputBlob.size / 1024).toFixed(1)} KB`;
-            qualityPercEl.textContent = `${Math.round(targetQuality * 100)}%`;
+            qualityPercEl.textContent = `${Math.round(reactiveQualityRatio * 100)}%`;
 
             downloadBtn.disabled = false;
             downloadBtn.textContent = "Download Image (JPG)";
-            downloadBtn.classList.remove('cursor-not-allowed', 'bg-slate-700', 'text-slate-400');
-            downloadBtn.classList.add('bg-white', 'text-slate-900', 'hover:bg-slate-100');
+            downloadBtn.classList.remove('cursor-not-allowed', 'bg-slate-800', 'text-slate-500');
+            downloadBtn.classList.add('bg-white', 'text-slate-950', 'hover:bg-slate-100');
         }
 
         downloadBtn.addEventListener('click', () => {
-            if (!finalOutputBlob || !currentObjectURL) return;
-            checkAndResetDownloadCounter();
-            let count = parseInt(safeGetItem('sig_image_counter')) || 1;
-            const downloadLink = document.createElement('a');
-            downloadLink.href = currentObjectURL;
-            downloadLink.download = `image ${count}.jpg`;
-            downloadLink.click();
-            safeSetItem('sig_image_counter', (count + 1).toString());
+            if (!finalOutputBlob || !downloadBlobUrlRef) return;
+            verifyAndClearDownloadIndex();
+            let uniqueSessionIndexCount = parseInt(fetchInternalValue('sig_image_counter')) || 1;
+            const virtualAnchorDownloadElement = document.createElement('a');
+            virtualAnchorDownloadElement.href = downloadBlobUrlRef;
+            virtualAnchorDownloadElement.download = `image ${uniqueSessionIndexCount}.jpg`;
+            virtualAnchorDownloadElement.click();
+            pushInternalValue('sig_image_counter', (uniqueSessionIndexCount + 1).toString());
         });
     </script>
 </body>
