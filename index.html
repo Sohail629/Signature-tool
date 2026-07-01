@@ -126,6 +126,7 @@
 
         let rawImageInstance = null;
         let finalOutputBlob = null;
+        let currentObjectURL = null; // MEMORY TRACKER FOR UNLOADING ACTIVE RAM POOLS
         let manualRotationDegrees = 0; 
         let initialSizeKBs = 0;
         const targetOutputFormat = 'image/jpeg';
@@ -196,7 +197,15 @@
             resetToolState();
         });
 
+        function clearActiveObjectURLs() {
+            if (currentObjectURL) {
+                URL.revokeObjectURL(currentObjectURL);
+                currentObjectURL = null;
+            }
+        }
+
         function resetToolState() {
+            clearActiveObjectURLs();
             rawImageInstance = null;
             finalOutputBlob = null;
             manualRotationDegrees = 0;
@@ -238,12 +247,10 @@
             rawImageInstance.src = src;
         }
 
-        // UPGRADED MULTI-SPECTRAL TYPOGRAPHIC PROFILE ORIENTATION ENGINE
         function calculateHumanReadingScore(ctx, w, h) {
             const imgData = ctx.getImageData(0, 0, w, h);
             const data = imgData.data;
 
-            // 1. Detect background ambient polarity
             let cornerBrightnessSum = 0;
             let corners = [0, (w - 1) * 4, (h - 1) * w * 4, ((h - 1) * w + (w - 1)) * 4];
             corners.forEach(idx => cornerBrightnessSum += (data[idx] + data[idx+1] + data[idx+2]) / 3);
@@ -251,8 +258,6 @@
             let isDarkBg = avgBg < 125;
 
             let minX = w, maxX = 0, minY = h, maxY = 0;
-            
-            // 2. Scan content bounding coordinates, masking out outer 3% noise artifacts
             let marginX = Math.floor(w * 0.03);
             let marginY = Math.floor(h * 0.03);
 
@@ -276,7 +281,6 @@
             let rowProfiles = new Array(cropH).fill(0);
             let totalInkPixels = 0;
 
-            // 3. Map Projection Profiles inside Isolated Box
             for (let y = minY; y <= maxY; y++) {
                 for (let x = minX; x <= maxX; x++) {
                     let idx = (y * w + x) * 4;
@@ -291,10 +295,7 @@
 
             if (totalInkPixels === 0) return 0;
 
-            // Heuristic A: Text lines/signatures structurally favor wide landscape bounds
             let aspectScore = cropW / cropH;
-
-            // Heuristic B: Row profile variance checks for distinct peaks (horizontal) vs blurs (vertical)
             let meanRowInk = totalInkPixels / cropH;
             let rowVariance = 0;
             for (let y = 0; y < cropH; y++) {
@@ -302,7 +303,6 @@
             }
             rowVariance = rowVariance / cropH;
 
-            // Heuristic C: Find the baseline/x-height primary peak row
             let peakRowIndex = 0;
             let maxInkVal = -1;
             for (let y = 0; y < cropH; y++) {
@@ -312,7 +312,6 @@
                 }
             }
 
-            // Upright alignment anchors the dense baseline peak in the lower half of the text box
             let peakLocationRatio = peakRowIndex / cropH;
             let baselineLocationWeight = 1.0;
             if (peakLocationRatio >= 0.45 && peakLocationRatio <= 0.85) {
@@ -321,7 +320,6 @@
                 baselineLocationWeight = 0.3; 
             }
 
-            // Heuristic D: Boundary drop-off sharpness (baseline boundaries drop off faster than ascenders)
             let topBoundaryGradient = 0;
             let bottomBoundaryGradient = 0;
             let boundZone = Math.max(1, Math.floor(cropH * 0.20)); 
@@ -426,36 +424,67 @@
                 monoMap[i / 4] = Math.floor(r * 0.299 + g * 0.587 + b * 0.114);
             }
 
-            const kernelRadius = 8; 
+            const gridX = 16;
+            const gridY = 16;
+            const blockW = Math.ceil(w / gridX);
+            const blockH = Math.ceil(h / gridY);
+            const bgGrid = new Uint8Array(gridX * gridY);
+
+            for (let gy = 0; gy < gridY; gy++) {
+                for (let gx = 0; gx < gridX; gx++) {
+                    let xStart = gx * blockW;
+                    let xEnd = Math.min(w, xStart + blockW);
+                    let yStart = gy * blockH;
+                    let yEnd = Math.min(h, yStart + blockH);
+                    
+                    let blockVals = [];
+                    for (let y = yStart; y < yEnd; y += 4) {
+                        for (let x = xStart; x < xEnd; x += 4) {
+                            blockVals.push(monoMap[y * w + x]);
+                        }
+                    }
+                    if (blockVals.length === 0) {
+                        bgGrid[gy * gridX + gx] = 255;
+                    } else {
+                        blockVals.sort((a, b) => a - b);
+                        bgGrid[gy * gridX + gx] = blockVals[Math.floor(blockVals.length * 0.90)];
+                    }
+                }
+            }
+
+            const threshOffset = 15; 
+            const horizontalGuard = Math.max(8, Math.floor(w * 0.02));
+            const verticalGuard = Math.max(8, Math.floor(h * 0.02));
 
             for (let y = 0; y < h; y++) {
+                const gy = Math.min(gridY - 1, Math.floor(y / blockH));
                 for (let x = 0; x < w; x++) {
-                    const idx = (y * w + x) * 4;
-                    const monoIdx = y * w + x;
-
-                    const leftVal   = x > kernelRadius ? monoMap[monoIdx - kernelRadius] : monoMap[monoIdx];
-                    const rightVal  = x < w - kernelRadius ? monoMap[monoIdx + kernelRadius] : monoMap[monoIdx];
-                    const topVal    = y > kernelRadius ? monoMap[monoIdx - kernelRadius * w] : monoMap[monoIdx];
-                    const bottomVal = y < h - kernelRadius ? monoMap[monoIdx + kernelRadius * w] : monoMap[monoIdx];
-
-                    const localBackgroundAverage = (leftVal + rightVal + topVal + bottomVal) / 4;
-                    const currentPixelLuminosity = monoMap[monoIdx];
-                    const diff = localBackgroundAverage - currentPixelLuminosity;
+                    const gx = Math.min(gridX - 1, Math.floor(x / blockW));
+                    const localBg = bgGrid[gy * gridX + gx];
+                    const pixelLum = monoMap[y * w + x];
                     
-                    if (diff > 7 && currentPixelLuminosity < 242) {
-                        pixels[idx]     = currentPixelLuminosity;
-                        pixels[idx + 1] = currentPixelLuminosity;
-                        pixels[idx + 2] = currentPixelLuminosity;
-                        pixels[idx + 3] = 255;
+                    let targetVal = 255;
+                    if (pixelLum < localBg - threshOffset) {
+                        let maxInkLum = Math.floor((localBg - threshOffset) * 0.40);
+                        if (pixelLum <= maxInkLum) {
+                            targetVal = 0; 
+                        } else {
+                            targetVal = Math.floor(((pixelLum - maxInkLum) / ((localBg - threshOffset) - maxInkLum)) * 255);
+                        }
+                    }
+                    
+                    const idx = (y * w + x) * 4;
+                    pixels[idx]     = targetVal;
+                    pixels[idx + 1] = targetVal;
+                    pixels[idx + 2] = targetVal;
+                    pixels[idx + 3] = 255;
 
-                        if (x < minX) minX = x; if (x > maxX) maxX = x;
-                        if (y < minY) minY = y; if (y > maxY) maxY = y;
+                    if (targetVal < 200 && x > horizontalGuard && x < (w - horizontalGuard) && y > verticalGuard && y < (h - verticalGuard)) {
+                        if (x < minX) minX = x; 
+                        if (x > maxX) maxX = x;
+                        if (y < minY) minY = y; 
+                        if (y > maxY) maxY = y;
                         inkDetected = true;
-                    } else {
-                        pixels[idx]     = 255;
-                        pixels[idx + 1] = 255;
-                        pixels[idx + 2] = 255;
-                        pixels[idx + 3] = 255;
                     }
                 }
             }
@@ -465,7 +494,7 @@
                 minX = 0; minY = 0; maxX = w; maxY = h; 
             }
 
-            const padding = 25;
+            const padding = 30;
             minX = Math.max(0, minX - padding);
             minY = Math.max(0, minY - padding);
             maxX = Math.min(w, maxX + padding);
@@ -478,41 +507,22 @@
             cropCanvas.width = cropW;
             cropCanvas.height = cropH;
             const cropCtx = cropCanvas.getContext('2d');
+            
+            cropCtx.imageSmoothingEnabled = true;
+            cropCtx.imageSmoothingQuality = 'high';
             cropCtx.drawImage(processingCanvas, minX, minY, cropW, cropH, 0, 0, cropW, cropH);
 
-            const MAX_BYTES = 18 * 1024; 
-            let quality = 0.85;
-            let scale = 1.0;
-            let outputBlob = null;
+            const highQualitySetting = 0.98; 
+            finalOutputBlob = await new Promise(res => cropCanvas.toBlob(res, targetOutputFormat, highQualitySetting));
 
-            outputBlob = await new Promise(res => cropCanvas.toBlob(res, targetOutputFormat, quality));
-            while (outputBlob.size > MAX_BYTES && quality > 0.15) {
-                quality -= 0.10; 
-                outputBlob = await new Promise(res => cropCanvas.toBlob(res, targetOutputFormat, quality));
-            }
-
-            let activeCanvas = cropCanvas;
-            while (outputBlob.size > MAX_BYTES && scale > 0.1) {
-                scale -= 0.15; 
-                const scaleCanvas = document.createElement('canvas');
-                scaleCanvas.width = Math.max(10, Math.floor(cropW * scale));
-                scaleCanvas.height = Math.max(10, Math.floor(cropH * scale));
-                
-                const scaleCtx = scaleCanvas.getContext('2d');
-                scaleCtx.imageSmoothingEnabled = true;
-                scaleCtx.imageSmoothingQuality = 'high';
-                scaleCtx.drawImage(cropCanvas, 0, 0, scaleCanvas.width, scaleCanvas.height);
-                
-                activeCanvas = scaleCanvas;
-                outputBlob = await new Promise(res => activeCanvas.toBlob(res, targetOutputFormat, Math.max(0.1, quality)));
-            }
-
-            finalOutputBlob = outputBlob;
-            previewImage.src = URL.createObjectURL(finalOutputBlob);
+            // CRITICAL BUG FIX: Clear out the old object reference from the browser RAM map before creating a new one
+            clearActiveObjectURLs();
+            currentObjectURL = URL.createObjectURL(finalOutputBlob);
+            previewImage.src = currentObjectURL;
             
             origSizeEl.textContent = typeof initialSizeKBs === 'number' ? `${initialSizeKBs} KB` : initialSizeKBs;
             optSizeEl.textContent = `${(finalOutputBlob.size / 1024).toFixed(1)} KB`;
-            qualityPercEl.textContent = `${Math.round(quality * 100)}%`;
+            qualityPercEl.textContent = `${Math.round(highQualitySetting * 100)}%`;
 
             downloadBtn.disabled = false;
             downloadBtn.textContent = "Download Image (JPG)";
@@ -521,11 +531,11 @@
         }
 
         downloadBtn.addEventListener('click', () => {
-            if (!finalOutputBlob) return;
+            if (!finalOutputBlob || !currentObjectURL) return;
             checkAndResetDownloadCounter();
             let count = parseInt(safeGetItem('sig_image_counter')) || 1;
             const downloadLink = document.createElement('a');
-            downloadLink.href = URL.createObjectURL(finalOutputBlob);
+            downloadLink.href = currentObjectURL;
             downloadLink.download = `image ${count}.jpg`;
             downloadLink.click();
             safeSetItem('sig_image_counter', (count + 1).toString());
