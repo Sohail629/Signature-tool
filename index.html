@@ -42,7 +42,7 @@
                     <h1 class="text-2xl font-bold tracking-tight text-white">Signature Tool</h1>
                     <span class="text-[10px] font-semibold tracking-wider uppercase bg-indigo-500/10 text-indigo-400 px-2 py-0.5 rounded border border-indigo-500/20 mt-0.5">V1 Tool</span>
                 </div>
-                <p class="text-sm text-slate-400 mt-1">Universal Multi-Tone Dark Mode & Black Ink Conversion Engine</p>
+                <p class="text-sm text-slate-400 mt-1">Universal Dark Mode Conversion & Pure Black Ink Isolation Engine</p>
             </div>
             
             <div class="flex items-center gap-1.5 text-[11px] text-emerald-400 font-medium bg-emerald-500/5 px-2.5 py-1 rounded-full border border-emerald-500/10 shrink-0">
@@ -72,7 +72,7 @@
             
             <div id="placeholderText" class="text-center space-y-2 pointer-events-none">
                 <p class="text-sm font-medium text-slate-400">Click to upload or press <span class="text-indigo-400">Ctrl + V</span> to paste</p>
-                <p class="text-xs text-slate-500">Auto-Refines & Normalizes any color (Red, Blue, Dark Capture) to Solid Black Ink</p>
+                <p class="text-xs text-slate-500">Auto-detects and converts dark backgrounds to clean white canvas with crisp black ink</p>
             </div>
 
             <div id="previewBox" class="preview-container hidden rounded-lg p-1.5 bg-white shadow-xl">
@@ -99,9 +99,11 @@
             Download Image (JPG)
         </button>
 
-        <p class="text-center text-[11px] text-slate-500 mt-4 tracking-wide">
-            Security Guarantee: Processing occurs completely inside your browser. No files are uploaded to any server.
-        </p>
+        <div class="mt-4 flex items-center justify-center gap-1.5 text-[11px] text-slate-500 tracking-wide">
+            <span>Security Guarantee: Processing occurs completely inside your browser.</span>
+            <span class="text-slate-600">•</span>
+            <span id="refreshTimerLabel" class="text-slate-400 font-medium">Refreshing cache in 60m</span>
+        </div>
 
     </div>
 
@@ -118,6 +120,7 @@
         const clearBtn = document.getElementById('clearBtn');
         const downloadBtn = document.getElementById('downloadBtn');
         const windowDragOverlay = document.getElementById('windowDragOverlay');
+        const refreshTimerLabel = document.getElementById('refreshTimerLabel');
         
         const origSizeEl = document.getElementById('origSize');
         const optSizeEl = document.getElementById('optSize');
@@ -158,6 +161,21 @@
 
         checkAndResetDownloadCounter();
 
+        // 1-HOUR AUTO-REFRESH ENGINE
+        const loadTimestamp = Date.now();
+        const absoluteRefreshDuration = 60 * 60 * 1000; 
+        
+        setInterval(() => {
+            const elapsed = Date.now() - loadTimestamp;
+            const remainingMins = Math.max(0, Math.ceil((absoluteRefreshDuration - elapsed) / 60000));
+            if (refreshTimerLabel) {
+                refreshTimerLabel.textContent = `Refreshing cache in ${remainingMins}m`;
+            }
+            if (elapsed >= absoluteRefreshDuration) {
+                window.location.reload();
+            }
+        }, 30000);
+
         window.addEventListener('dragenter', (e) => {
             e.preventDefault();
             windowDragOverlay.classList.remove('opacity-0');
@@ -175,12 +193,30 @@
         dropZone.addEventListener('click', () => { if(!rawImageInstance) fileInput.click(); });
         fileInput.addEventListener('change', (e) => processFileEntry(e.target.files[0]));
 
+        // FULLY FIXED MODERN INTERCEPTOR FOR PASTE EVENT
         window.addEventListener('paste', (e) => {
-            const clipboardItems = (e.clipboardData || e.originalEvent.clipboardData).items;
-            for (let item of clipboardItems) {
-                if (item.type.indexOf('image') === 0) {
-                    processFileEntry(item.getAsFile());
-                    return;
+            const clipboardData = e.clipboardData || window.clipboardData;
+            if (!clipboardData) return;
+
+            if (clipboardData.files && clipboardData.files.length > 0) {
+                for (let file of clipboardData.files) {
+                    if (file.type.match('image.*')) {
+                        processFileEntry(file);
+                        return;
+                    }
+                }
+            }
+
+            if (clipboardData.items) {
+                const items = clipboardData.items;
+                for (let i = 0; i < items.length; i++) {
+                    if (items[i].type.indexOf('image') === 0) {
+                        const file = items[i].getAsFile();
+                        if (file) {
+                            processFileEntry(file);
+                            return;
+                        }
+                    }
                 }
             }
         });
@@ -218,7 +254,7 @@
             if (!file || !file.type.match('image.*')) return;
             initialSizeKBs = (file.size / 1024).toFixed(1);
             
-            downloadBtn.textContent = "Isolating ink profiles...";
+            downloadBtn.textContent = "Processing layout arrays...";
             downloadBtn.disabled = true;
             
             const reader = new FileReader();
@@ -238,108 +274,36 @@
             rawImageInstance.src = src;
         }
 
-        // UNIVERSAL CHROMATIC ORIENTATION EXTRACTOR
-        function calculateUniversalReadingScore(ctx, w, h, isDarkBackground) {
+        function calculateHumanReadingScore(ctx, w, h) {
             const imgData = ctx.getImageData(0, 0, w, h);
             const data = imgData.data;
 
             let rowProfiles = new Array(h).fill(0);
             let colProfiles = new Array(w).fill(0);
-            let gridMap = new Uint8Array(w * h);
-            let activePoints = 0;
 
             for (let y = 0; y < h; y++) {
                 for (let x = 0; x < w; x++) {
                     let idx = (y * w + x) * 4;
-                    let r = data[idx], g = data[idx+1], b = data[idx+2];
-                    
-                    let luminosity = Math.floor(r * 0.299 + g * 0.587 + b * 0.114);
-                    if (isDarkBackground) luminosity = 255 - luminosity; 
-
-                    let maxDiff = Math.max(Math.abs(r - g), Math.abs(r - b), Math.abs(g - b));
-                    let isInkNode = (luminosity < 190) || (maxDiff > 35 && luminosity < 225);
-
-                    if (isInkNode && data[idx+3] > 40) {
+                    let brightness = (data[idx] + data[idx+1] + data[idx+2]) / 3;
+                    if (data[idx+3] > 40 && brightness < 210) {
                         rowProfiles[y]++;
                         colProfiles[x]++;
-                        gridMap[y * w + x] = 1;
-                        activePoints++;
                     }
                 }
             }
 
-            if (activePoints < 15) return 0;
-
-            let clusterCount = 0;
-            let combinedClusterAspects = 0;
-            let visited = new Uint8Array(w * h);
-            let step = 5;
-
-            for (let y = 10; y < h - 10; y += step) {
-                for (let x = 10; x < w - 10; x += step) {
-                    let gIdx = y * w + x;
-                    if (gridMap[gIdx] === 1 && visited[gIdx] === 0) {
-                        let minC_X = x, maxC_X = x, minC_Y = y, maxC_Y = y;
-                        let queue = [gIdx];
-                        visited[gIdx] = 1;
-                        let countSize = 0;
-
-                        while (queue.length > 0 && countSize < 300) {
-                            let curr = queue.shift();
-                            countSize++;
-                            let cx = curr % w;
-                            let cy = Math.floor(curr / w);
-
-                            if (cx < minC_X) minC_X = cx; if (cx > maxC_X) maxC_X = cx;
-                            if (cy < minC_Y) minC_Y = cy; if (cy > maxC_Y) maxC_Y = cy;
-
-                            let neighbors = [curr - 1, curr + 1, curr - w, curr + w];
-                            for (let n of neighbors) {
-                                if (n >= 0 && n < w * h && gridMap[n] === 1 && visited[n] === 0) {
-                                    visited[n] = 1;
-                                    queue.push(n);
-                                }
-                            }
-                        }
-
-                        let cW = maxC_X - minC_X + 1;
-                        let cH = maxC_Y - minC_Y + 1;
-                        if (cW > 6 && cH > 6) {
-                            clusterCount++;
-                            combinedClusterAspects += (cW / cH);
-                        }
-                    }
-                }
-            }
-
-            let meanClusterAspect = clusterCount > 0 ? (combinedClusterAspects / clusterCount) : 1.0;
-
-            const calculateEntropy = (profile) => {
-                let nonZero = profile.filter(v => v > 1);
-                if (nonZero.length === 0) return 0;
-                let sum = nonZero.reduce((a, b) => a + b, 0);
-                return nonZero.reduce((entropy, val) => {
-                    let p = val / sum;
-                    return entropy - (p * Math.log2(p));
-                }, 0);
+            const getProfileVariance = (arr) => {
+                const active = arr.filter(v => v > 1);
+                if (active.length === 0) return 0;
+                const mean = active.reduce((a, b) => a + b, 0) / active.length;
+                return arr.reduce((s, v) => s + Math.pow(v - mean, 2), 0) / arr.length;
             };
 
-            let rowEntropy = calculateEntropy(rowProfiles);
-            let colEntropy = calculateEntropy(colProfiles);
+            let horizontalVariance = getProfileVariance(rowProfiles);
+            let verticalVariance = getProfileVariance(colProfiles);
 
-            let score = 0;
-            if (colEntropy > rowEntropy) score += 350;
-            if (meanClusterAspect >= 1.35 && meanClusterAspect <= 6.0) score += 500;
-
-            let highMass = 0, lowMass = 0;
-            let splitLine = Math.floor(h * 0.5);
-            for (let y = 0; y < h; y++) {
-                if (y < splitLine) highMass += rowProfiles[y];
-                else lowMass += rowProfiles[y];
-            }
-            if (lowMass >= highMass) score += 150;
-
-            return score;
+            if (horizontalVariance === 0 || verticalVariance === 0) return 0;
+            return (horizontalVariance / (verticalVariance + 0.1));
         }
 
         async function applySignatureTransformation(enableAutoOrientation = false) {
@@ -351,26 +315,207 @@
             const nativeW = rawImageInstance.naturalWidth;
             const nativeH = rawImageInstance.naturalHeight;
 
-            processingCanvas.width = nativeW; 
-            processingCanvas.height = nativeH;
-            ctx.drawImage(rawImageInstance, 0, 0);
-            
-            let sampleData = ctx.getImageData(0, 0, Math.min(20, nativeW), Math.min(20, nativeH)).data;
-            let cornerLumSum = 0, samples = 0;
-            for (let i = 0; i < sampleData.length; i += 16) {
-                cornerLumSum += (sampleData[i] + sampleData[i+1] + sampleData[i+2]) / 3;
-                samples++;
-            }
-            let isDarkBackground = (cornerLumSum / samples) < 95;
-
             let targetRotation = manualRotationDegrees;
             
             if (enableAutoOrientation) {
                 let scores = {};
                 const evaluationAngles = [0, 90, 180, 270];
-
                 for (let angle of evaluationAngles) {
                     if (angle === 90 || angle === 270) {
                         processingCanvas.width = nativeH; processingCanvas.height = nativeW;
                     } else {
-                        processingCanvas.width = nativeW; processing
+                        processingCanvas.width = nativeW; processingCanvas.height = nativeH;
+                    }
+                    
+                    ctx.clearRect(0, 0, processingCanvas.width, processingCanvas.height);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, processingCanvas.width, processingCanvas.height);
+                    
+                    ctx.translate(processingCanvas.width / 2, processingCanvas.height / 2);
+                    ctx.rotate((angle * Math.PI) / 180);
+                    ctx.drawImage(rawImageInstance, -nativeW / 2, -nativeH / 2);
+                    ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+                    scores[angle] = calculateHumanReadingScore(ctx, processingCanvas.width, processingCanvas.height);
+                }
+
+                let optimumAngle = 0;
+                let highestScore = scores[0];
+
+                for (let angle of [90, 180, 270]) {
+                    if (scores[angle] > highestScore) {
+                        highestScore = scores[angle];
+                        optimumAngle = angle;
+                    }
+                }
+
+                targetRotation = optimumAngle;
+                manualRotationDegrees = optimumAngle;
+            }
+
+            if (targetRotation === 90 || targetRotation === 270) {
+                processingCanvas.width = nativeH; processingCanvas.height = nativeW;
+            } else {
+                processingCanvas.width = nativeW; processingCanvas.height = nativeH;
+            }
+
+            ctx.clearRect(0, 0, processingCanvas.width, processingCanvas.height);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, processingCanvas.width, processingCanvas.height);
+            
+            ctx.translate(processingCanvas.width / 2, processingCanvas.height / 2);
+            ctx.rotate((targetRotation * Math.PI) / 180);
+            ctx.drawImage(rawImageInstance, -nativeW / 2, -nativeH / 2);
+            ctx.setTransform(1, 0, 0, 1, 0, 0); 
+
+            let imgData = ctx.getImageData(0, 0, processingCanvas.width, processingCanvas.height);
+            const pixels = imgData.data;
+            const w = processingCanvas.width;
+            const h = processingCanvas.height;
+
+            // BLACK POLARITY DETECTION LAYER (Analyzes corner distribution values)
+            let cornerBrightnessSum = 0;
+            let samplePoints = [
+                0,                                    
+                (w - 1) * 4,                          
+                (h - 1) * w * 4,                      
+                ((h - 1) * w + (w - 1)) * 4           
+            ];
+            samplePoints.forEach(idx => {
+                cornerBrightnessSum += (pixels[idx] + pixels[idx+1] + pixels[idx+2]) / 3;
+            });
+            let averageCornerBrightness = cornerBrightnessSum / 4;
+            let shouldInvertColors = averageCornerBrightness < 120; 
+
+            // STEP 1: Compute a mapped grayscale buffer while correcting polarity
+            const monoMap = new Uint8Array(w * h);
+            for (let i = 0; i < pixels.length; i += 4) {
+                let r = pixels[i];
+                let g = pixels[i+1];
+                let b = pixels[i+2];
+                
+                if (shouldInvertColors) {
+                    r = 255 - r;
+                    g = 255 - g;
+                    b = 255 - b;
+                }
+                monoMap[i / 4] = Math.floor(r * 0.299 + g * 0.587 + b * 0.114);
+            }
+
+            let minX = w, maxX = 0, minY = h, maxY = 0;
+            let inkDetected = false;
+            const kernelRadius = 8; 
+
+            // STEP 2: Use an adaptive local background engine to isolate ink cleanly
+            for (let y = 0; y < h; y++) {
+                for (let x = 0; x < w; x++) {
+                    const idx = (y * w + x) * 4;
+                    const monoIdx = y * w + x;
+
+                    const leftVal   = x > kernelRadius ? monoMap[monoIdx - kernelRadius] : monoMap[monoIdx];
+                    const rightVal  = x < w - kernelRadius ? monoMap[monoIdx + kernelRadius] : monoMap[monoIdx];
+                    const topVal    = y > kernelRadius ? monoMap[monoIdx - kernelRadius * w] : monoMap[monoIdx];
+                    const bottomVal = y < h - kernelRadius ? monoMap[monoIdx + kernelRadius * w] : monoMap[monoIdx];
+
+                    const localBackgroundAverage = (leftVal + rightVal + topVal + bottomVal) / 4;
+                    const currentPixelLuminosity = monoMap[monoIdx];
+                    const diff = localBackgroundAverage - currentPixelLuminosity;
+                    
+                    // Identify signature lines, mapping them to dark ink and stripping background highlights
+                    if (diff > 6 && currentPixelLuminosity < 242) {
+                        // Normalize the final stroke color into rich black ink
+                        let inkIntensity = Math.max(0, Math.floor(currentPixelLuminosity * 0.35)); 
+                        pixels[idx]     = inkIntensity;
+                        pixels[idx + 1] = inkIntensity;
+                        pixels[idx + 2] = inkIntensity;
+                        pixels[idx + 3] = 255;
+
+                        if (x < minX) minX = x; if (x > maxX) maxX = x;
+                        if (y < minY) minY = y; if (y > maxY) maxY = y;
+                        inkDetected = true;
+                    } else {
+                        // Enforce pristine pure-white backdrop globally
+                        pixels[idx]     = 255;
+                        pixels[idx + 1] = 255;
+                        pixels[idx + 2] = 255;
+                        pixels[idx + 3] = 255;
+                    }
+                }
+            }
+            ctx.putImageData(imgData, 0, 0);
+
+            if (!inkDetected || minX >= maxX || minY >= maxY) { 
+                minX = 0; minY = 0; maxX = w; maxY = h; 
+            }
+
+            const padding = 25;
+            minX = Math.max(0, minX - padding);
+            minY = Math.max(0, minY - padding);
+            maxX = Math.min(w, maxX + padding);
+            maxY = Math.min(h, maxY + padding);
+
+            let cropW = maxX - minX;
+            let cropH = maxY - minY;
+
+            const cropCanvas = document.createElement('canvas');
+            cropCanvas.width = cropW;
+            cropCanvas.height = cropH;
+            const cropCtx = cropCanvas.getContext('2d');
+            cropCtx.drawImage(processingCanvas, minX, minY, cropW, cropH, 0, 0, cropW, cropH);
+
+            const MAX_BYTES = 18 * 1024; 
+            let quality = 0.85;
+            let scale = 1.0;
+            let outputBlob = null;
+
+            outputBlob = await new Promise(res => cropCanvas.toBlob(res, targetOutputFormat, quality));
+            while (outputBlob.size > MAX_BYTES && quality > 0.15) {
+                quality -= 0.10; 
+                outputBlob = await new Promise(res => cropCanvas.toBlob(res, targetOutputFormat, quality));
+            }
+
+            let activeCanvas = cropCanvas;
+            while (outputBlob.size > MAX_BYTES && scale > 0.1) {
+                scale -= 0.15; 
+                const scaleCanvas = document.createElement('canvas');
+                scaleCanvas.width = Math.max(10, Math.floor(cropW * scale));
+                scaleCanvas.height = Math.max(10, Math.floor(cropH * scale));
+                
+                const scaleCtx = scaleCanvas.getContext('2d');
+                scaleCtx.imageSmoothingEnabled = true;
+                scaleCtx.imageSmoothingQuality = 'high';
+                scaleCtx.drawImage(cropCanvas, 0, 0, scaleCanvas.width, scaleCanvas.height);
+                
+                activeCanvas = scaleCanvas;
+                outputBlob = await new Promise(res => activeCanvas.toBlob(res, targetOutputFormat, Math.max(0.1, quality)));
+            }
+
+            finalOutputBlob = outputBlob;
+            previewImage.src = URL.createObjectURL(finalOutputBlob);
+            
+            origSizeEl.textContent = typeof initialSizeKBs === 'number' ? `${initialSizeKBs} KB` : initialSizeKBs;
+            optSizeEl.textContent = `${(finalOutputBlob.size / 1024).toFixed(1)} KB`;
+            qualityPercEl.textContent = `${Math.round(quality * 100)}%`;
+
+            downloadBtn.disabled = false;
+            downloadBtn.textContent = "Download Image (JPG)";
+            downloadBtn.classList.remove('cursor-not-allowed', 'bg-slate-700', 'text-slate-400');
+            downloadBtn.classList.add('bg-white', 'text-slate-900', 'hover:bg-slate-100');
+        }
+
+        downloadBtn.addEventListener('click', () => {
+            if (!finalOutputBlob) return;
+            
+            checkAndResetDownloadCounter();
+            
+            let count = parseInt(safeGetItem('sig_image_counter')) || 1;
+            const downloadLink = document.createElement('a');
+            downloadLink.href = URL.createObjectURL(finalOutputBlob);
+            downloadLink.download = `image ${count}.jpg`;
+            downloadLink.click();
+            
+            safeSetItem('sig_image_counter', (count + 1).toString());
+        });
+    </script>
+</body>
+</html>
